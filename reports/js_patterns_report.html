@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Code Pattern Analysis Report</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                    color: #333;
+                }
+                h1, h2, h3 {
+                    color: #2c3e50;
+                }
+                h1 {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid #eee;
+                }
+                h2 {
+                    margin-top: 30px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid #eee;
+                }
+                
+                /* Summary styles */
+                .summary-section {
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                    padding: 20px;
+                    margin-bottom: 30px;
+                }
+                .summary-stats {
+                    display: flex;
+                    justify-content: space-around;
+                    flex-wrap: wrap;
+                    margin: 20px 0;
+                }
+                .stat-box {
+                    text-align: center;
+                    padding: 15px;
+                    border-radius: 8px;
+                    background-color: #f1f8ff;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                    min-width: 150px;
+                    margin: 10px;
+                }
+                .stat-value {
+                    font-size: 2.5em;
+                    font-weight: bold;
+                    color: #2980b9;
+                }
+                .stat-label {
+                    font-size: 0.9em;
+                    color: #7f8c8d;
+                    text-transform: uppercase;
+                }
+                .error .stat-value {
+                    color: #e74c3c;
+                }
+                
+                /* File section styles */
+                .file-section {
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                    padding: 20px;
+                    margin-bottom: 30px;
+                }
+                .file-info {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                }
+                .language-badge {
+                    background-color: #3498db;
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    font-size: 0.9em;
+                    margin-right: 15px;
+                }
+                .pattern-count {
+                    color: #7f8c8d;
+                }
+                .file-summary {
+                    background-color: #f9f9f9;
+                    padding: 15px;
+                    border-radius: 4px;
+                    margin-bottom: 20px;
+                }
+                
+                /* Pattern styles */
+                .pattern-group {
+                    margin-bottom: 15px;
+                    border: 1px solid #eee;
+                    border-radius: 4px;
+                }
+                .pattern-header {
+                    background-color: #f5f5f5;
+                    padding: 10px 15px;
+                    margin: 0;
+                    cursor: pointer;
+                    border-radius: 4px 4px 0 0;
+                }
+                .pattern-header:hover {
+                    background-color: #ebebeb;
+                }
+                .expand-icon {
+                    display: inline-block;
+                    transition: transform 0.2s;
+                    margin-right: 10px;
+                }
+                .pattern-matches {
+                    display: none;
+                    padding: 0 15px;
+                }
+                .pattern-list {
+                    list-style-type: none;
+                    padding-left: 0;
+                }
+                .pattern-list li {
+                    padding: 5px 0;
+                    border-bottom: 1px solid #f5f5f5;
+                }
+                .pattern-name {
+                    font-weight: bold;
+                }
+                
+                /* Match styles */
+                .match {
+                    margin: 15px 0;
+                    padding: 10px;
+                    background-color: #f9f9f9;
+                    border-radius: 4px;
+                }
+                .match-header {
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                .match-type {
+                    color: #7f8c8d;
+                    font-weight: normal;
+                }
+                .match-line {
+                    color: #e74c3c;
+                    font-weight: normal;
+                    float: right;
+                }
+                .match-details {
+                    font-size: 0.9em;
+                    color: #555;
+                }
+                .match-detail {
+                    margin: 5px 0;
+                }
+                .detail-key {
+                    color: #2980b9;
+                    font-weight: bold;
+                }
+                .error-box {
+                    background-color: #ffecec;
+                    color: #e74c3c;
+                    padding: 15px;
+                    border-radius: 4px;
+                    margin-top: 15px;
+                }
+                
+                /* Chart styles */
+                .chart-container {
+                    margin: 20px 0;
+                    height: 300px;
+                }
+                
+                /* Responsive styles */
+                @media (max-width: 768px) {
+                    .stat-box {
+                        min-width: 120px;
+                    }
+                    .chart-container {
+                        height: 250px;
+                    }
+                }
+            </style>
+        
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>Code Pattern Analysis Report</h1>
+<div class="file-section" id="file-samples-patterns-js">
+<h2>samples/patterns.js</h2>
+<div class="file-info">
+<span class="language-badge">javascript</span>
+<span class="pattern-count">0 patterns</span>
+</div>
+<div class="file-summary">
+</div>
+</div>
+
+            <script>
+                // Toggle pattern matches visibility
+                function togglePattern(patternId) {
+                    const matches = document.getElementById('matches-' + patternId);
+                    const header = document.querySelector('#pattern-' + patternId + ' .pattern-header');
+                    const icon = header.querySelector('.expand-icon');
+                    
+                    if (matches.style.display === 'block') {
+                        matches.style.display = 'none';
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        matches.style.display = 'block';
+                        icon.style.transform = 'rotate(90deg)';
+                    }
+                }
+                
+                // Initialize all patterns as collapsed
+                document.addEventListener('DOMContentLoaded', () => {
+                    const patterns = document.querySelectorAll('.pattern-group');
+                    patterns.forEach(pattern => {
+                        const patternId = pattern.id.replace('pattern-', '');
+                        const matches = document.getElementById('matches-' + patternId);
+                        if (matches) {
+                            matches.style.display = 'none';
+                        }
+                    });
+                });
+            </script>
+        
+                <script>
+                    // Initialize charts
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // Helper function to create colors
+                        function getColors(count) {
+                            const colors = [
+                                '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6',
+                                '#1abc9c', '#d35400', '#34495e', '#16a085', '#27ae60',
+                                '#2980b9', '#8e44ad', '#f1c40f', '#e67e22', '#c0392b'
+                            ];
+                            
+                            // If we need more colors than available, cycle through them
+                            const result = [];
+                            for (let i = 0; i < count; i++) {
+                                result.push(colors[i % colors.length]);
+                            }
+                            return result;
+                        }
+                        
+                        // Helper function to create a chart
+                        function createChart(id, data, type = 'pie') {
+                            const ctx = document.getElementById(id);
+                            if (!ctx) return;
+                            
+                            const colors = getColors(data.labels.length);
+                            
+                            new Chart(ctx, {
+                                type: type,
+                                data: {
+                                    labels: data.labels,
+                                    datasets: [{
+                                        data: data.values,
+                                        backgroundColor: colors,
+                                        borderColor: colors,
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // Create summary charts
+                        if (typeof patternDistributionChartData !== 'undefined') {
+                            createChart('patternDistributionChart', patternDistributionChartData);
+                        }
+                        
+                        if (typeof typeDistributionChartData !== 'undefined') {
+                            createChart('typeDistributionChart', typeDistributionChartData);
+                        }
+                        
+                        if (typeof languageDistributionChartData !== 'undefined') {
+                            createChart('languageDistributionChart', languageDistributionChartData);
+                        }
+                        
+                        // Create file charts
+                        const fileCharts = document.querySelectorAll('[id^="chart-"]');
+                        fileCharts.forEach(chart => {
+                            const chartId = chart.id;
+                            const dataVar = chartId + 'Data';
+                            
+                            if (typeof window[dataVar] !== 'undefined') {
+                                createChart(chartId, window[dataVar], 'bar');
+                            }
+                        });
+                    });
+                </script>
+            
+</body>
+</html>

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  code-pattern-analyzer:
+    build: .
+    volumes:
+      - ./:/app
+      - ${SOURCE_CODE_PATH:-./sample-code}:/code
+    working_dir: /code
+    command: analyze --directory /code
+    environment:
+      - PYTHONPATH=/app
