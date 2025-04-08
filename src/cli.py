@@ -10,7 +10,6 @@ import logging
 from pathlib import Path
 
 from .analyzer import CodeAnalyzer
-from .mock_implementation import patch_analyzer
 from .commands import report, compare
 
 # Set up logging
@@ -21,11 +20,6 @@ logging.basicConfig(
 
 # Check if we should use the mock implementation
 use_mock = os.environ.get('CODE_PATTERN_USE_MOCK', 'True').lower() in ('true', '1', 'yes')
-if use_mock:
-    logging.info("Using mock implementation")
-    restore_original = patch_analyzer()
-else:
-    logging.info("Using tree-sitter implementation")
 
 
 @click.group()
@@ -39,23 +33,25 @@ cli.add_command(compare)
 
 
 @cli.command()
-def list_patterns():
+@click.option("--real/--mock", default=not use_mock, help="Use real or mock implementation")
+def list_patterns(real):
     """List all available patterns that can be detected."""
-    analyzer = CodeAnalyzer()
+    analyzer = CodeAnalyzer(use_mock=not real)
     patterns = analyzer.get_available_patterns()
     
-    click.echo("Available patterns:")
+    click.echo(f"Available patterns ({'real' if real else 'mock'} implementation):")
     for pattern in patterns:
         click.echo(f"  - {pattern}")
 
 
 @cli.command()
-def list_categories():
+@click.option("--real/--mock", default=not use_mock, help="Use real or mock implementation")
+def list_categories(real):
     """List all available pattern categories."""
-    analyzer = CodeAnalyzer()
+    analyzer = CodeAnalyzer(use_mock=not real)
     categories = analyzer.get_available_categories()
     
-    click.echo("Available categories:")
+    click.echo(f"Available categories ({'real' if real else 'mock'} implementation):")
     for category in categories:
         click.echo(f"  - {category}")
         
@@ -75,7 +71,8 @@ def list_categories():
 @click.option("--extensions", "-e", help="Comma-separated list of file extensions to analyze")
 @click.option("--exclude", help="Comma-separated list of directories to exclude")
 @click.option("--workers", type=int, default=4, help="Number of worker threads for directory analysis")
-def analyze(file, directory, pattern, category, output, format, extensions, exclude, workers):
+@click.option("--real/--mock", default=not use_mock, help="Use real or mock implementation")
+def analyze(file, directory, pattern, category, output, format, extensions, exclude, workers, real):
     """Analyze source code for patterns."""
     if not file and not directory:
         click.echo("Error: Either --file or --directory must be specified.")
@@ -89,7 +86,11 @@ def analyze(file, directory, pattern, category, output, format, extensions, excl
         click.echo("Error: Cannot specify both --pattern and --category.")
         sys.exit(1)
         
-    analyzer = CodeAnalyzer()
+    analyzer = CodeAnalyzer(use_mock=not real)
+    
+    # Show which implementation is being used
+    implementation_type = "real tree-sitter" if real else "mock"
+    click.echo(f"Using {implementation_type} implementation for analysis")
     
     try:
         # Parse extensions if provided
@@ -139,10 +140,6 @@ def main():
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
-    finally:
-        # Restore original implementation if patched
-        if 'restore_original' in globals():
-            restore_original()
     
     
 if __name__ == "__main__":

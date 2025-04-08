@@ -11,16 +11,58 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .parser import CodeParser
 from .pattern_recognizer import PatternRecognizer
+from .mock_implementation import patch_analyzer
+from .tree_sitter_impl import replace_mock_implementation
 
 logger = logging.getLogger(__name__)
 
 class CodeAnalyzer:
     """Analyzes source code files to identify patterns."""
     
-    def __init__(self):
-        """Initialize the analyzer with a parser and pattern recognizer."""
+    def __init__(self, use_mock: bool = False):
+        """Initialize the analyzer with a parser and pattern recognizer.
+        
+        Args:
+            use_mock: If True, use the mock implementation instead of tree-sitter
+        """
         self.parser = CodeParser()
         self.pattern_recognizer = PatternRecognizer()
+        self.use_mock = use_mock
+        self._restore_func = None
+        
+        # Configure the implementation
+        self._configure_implementation(use_mock)
+    
+    def _configure_implementation(self, use_mock: bool) -> None:
+        """Configure the implementation to use (mock or real).
+        
+        Args:
+            use_mock: If True, use the mock implementation
+        """
+        # Clean up any existing patch
+        if self._restore_func:
+            self._restore_func()
+            self._restore_func = None
+        
+        # Apply the appropriate implementation
+        if use_mock:
+            logger.info("Using mock implementation")
+            self._restore_func = patch_analyzer()
+        else:
+            logger.info("Using real tree-sitter implementation")
+            self._restore_func = replace_mock_implementation()
+    
+    def set_implementation(self, use_mock: bool) -> None:
+        """Set the implementation to use (mock or real).
+        
+        Args:
+            use_mock: If True, use the mock implementation
+        """
+        if use_mock == self.use_mock:
+            return  # Already using the requested implementation
+        
+        self.use_mock = use_mock
+        self._configure_implementation(use_mock)
     
     def analyze_file(self, 
                      file_path: Union[str, Path], 

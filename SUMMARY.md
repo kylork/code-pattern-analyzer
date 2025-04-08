@@ -88,6 +88,25 @@ The system uses tree-sitter for parsing, which provides several advantages:
 - Query language for pattern matching
 - Support for many programming languages
 
+#### Grammar Management
+
+The tree-sitter integration includes robust grammar management:
+
+- Automatic downloading of language grammars
+- Building grammars as needed
+- Fallback mechanism when Git is not available
+- Extracting node text with multiple strategies
+- Language querying with error handling
+
+#### Implementation Toggle
+
+The system now supports toggling between implementations:
+
+- Command-line flags for selecting implementation
+- Environment variable configuration
+- Programmatic API for switching at runtime
+- Seamless transition between mock and real implementations
+
 ### Pattern Definition Approach
 
 Patterns are defined using a flexible class-based system:
@@ -95,6 +114,7 @@ Patterns are defined using a flexible class-based system:
 - Base `Pattern` class for common functionality
 - `QueryBasedPattern` for tree-sitter query patterns
 - `CompositePattern` for combining multiple patterns
+- Enhanced query result processing with capture grouping
 
 ### Mock Implementation
 
@@ -103,6 +123,7 @@ For demonstration purposes, a mock implementation is provided:
 - Regex-based pattern detection
 - Simulates tree-sitter functionality
 - Allows testing without tree-sitter grammars
+- Compatible with the real implementation API
 
 ## Future Directions
 

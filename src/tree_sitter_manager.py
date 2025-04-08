@@ -140,7 +140,13 @@ class TreeSitterManager:
                 )
             except subprocess.CalledProcessError as e:
                 logger.error(f"Failed to clone {repo_url}: {e}")
-                return False
+                
+                # Attempt to download without git if git fails
+                try:
+                    self._download_without_git(language_name, repo_url, repo_dir)
+                except Exception as dl_e:
+                    logger.error(f"Failed to download {repo_url} without git: {dl_e}")
+                    return False
         
         # Build the grammar
         try:
@@ -154,11 +160,19 @@ class TreeSitterManager:
             # Determine the source path based on language specifics
             src_path = self._get_src_path(language_name, repo_dir)
             
+            # Check if the src directory has the necessary files
+            if not self._validate_grammar_source(src_path):
+                logger.error(f"Invalid grammar source directory: {src_path}")
+                return False
+            
             # Build the language
+            output_path = os.path.join(self.build_dir, f"{language_name}.so")
             Language.build_library(
-                os.path.join(self.build_dir, f"{language_name}.so"),
+                output_path,
                 [src_path]
             )
+            
+            logger.info(f"Successfully built grammar for {language_name} at {output_path}")
             
             # Load the language
             return self.load_language(language_name)
@@ -166,6 +180,82 @@ class TreeSitterManager:
         except Exception as e:
             logger.error(f"Failed to build {language_name}: {e}")
             return False
+            
+    def _validate_grammar_source(self, src_path: str) -> bool:
+        """Validate that a grammar source directory contains necessary files.
+        
+        Args:
+            src_path: Path to the grammar source directory
+            
+        Returns:
+            True if the source directory is valid, False otherwise
+        """
+        # Check that the directory exists
+        if not os.path.isdir(src_path):
+            return False
+            
+        # Check for essential files
+        required_files = ['parser.c', 'grammar.json']
+        for file in required_files:
+            if not os.path.exists(os.path.join(src_path, file)):
+                # Some repositories use different filename structures
+                if file == 'parser.c' and os.path.exists(os.path.join(src_path, 'parser.cc')):
+                    continue
+                if file == 'grammar.json' and os.path.exists(os.path.join(src_path, 'grammar.js')):
+                    continue
+                return False
+                
+        return True
+        
+    def _download_without_git(self, language_name: str, repo_url: str, target_dir: str) -> None:
+        """Download a language grammar without using git.
+        
+        Args:
+            language_name: Name of the language
+            repo_url: URL of the repository
+            target_dir: Directory to download to
+            
+        Raises:
+            Exception: If the download fails
+        """
+        import requests
+        import zipfile
+        from io import BytesIO
+        
+        logger.info(f"Attempting to download {language_name} grammar without git")
+        
+        # Convert GitHub URL to ZIP download URL
+        # e.g., https://github.com/tree-sitter/tree-sitter-python -> 
+        # https://github.com/tree-sitter/tree-sitter-python/archive/master.zip
+        if 'github.com' in repo_url:
+            zip_url = f"{repo_url}/archive/master.zip"
+        else:
+            raise ValueError(f"Non-GitHub URL not supported for direct download: {repo_url}")
+            
+        # Download the ZIP file
+        response = requests.get(zip_url, stream=True)
+        if response.status_code != 200:
+            raise ValueError(f"Failed to download {zip_url}: HTTP {response.status_code}")
+            
+        # Extract the ZIP file
+        with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
+            # The top-level directory in the ZIP is usually repo-branch
+            # e.g., tree-sitter-python-master
+            top_dir = zip_file.namelist()[0].split('/')[0]
+            
+            # Extract to a temporary directory
+            temp_dir = os.path.join(self.languages_dir, f"temp_{language_name}")
+            zip_file.extractall(temp_dir)
+            
+            # Move the contents to the target directory
+            extracted_dir = os.path.join(temp_dir, top_dir)
+            os.makedirs(os.path.dirname(target_dir), exist_ok=True)
+            shutil.move(extracted_dir, target_dir)
+            
+            # Clean up
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            
+        logger.info(f"Successfully downloaded {language_name} grammar to {target_dir}")
     
     def _get_src_path(self, language_name: str, repo_dir: str) -> str:
         """Get the source path for a language grammar.
@@ -339,12 +429,33 @@ class TreeSitterManager:
         Returns:
             The text corresponding to the node
         """
+        # Convert code to bytes if it's a string
         if isinstance(code, str):
             code_bytes = bytes(code, 'utf-8')
         else:
             code_bytes = code
+        
+        try:
+            # Try using node.text directly if available
+            if hasattr(node, 'text'):
+                if isinstance(node.text, bytes):
+                    return node.text.decode('utf-8')
+                if isinstance(node.text, str):
+                    return node.text
             
-        return node.text.decode('utf-8')
+            # Extract from the original code using byte offsets
+            start_byte = node.start_byte
+            end_byte = node.end_byte
+            
+            if start_byte < len(code_bytes) and end_byte <= len(code_bytes):
+                return code_bytes[start_byte:end_byte].decode('utf-8')
+            else:
+                # Handle out-of-range cases (should not happen normally)
+                return f"<node at {node.start_point}-{node.end_point}>"
+        except Exception as e:
+            logger.warning(f"Error extracting node text: {e}")
+            # Fallback to position information
+            return f"<node at {node.start_point}-{node.end_point}>"
     
     def get_available_languages(self) -> Set[str]:
         """Get a list of available languages.

@@ -79,10 +79,46 @@ code-pattern report /path/to/project --format html
 code-pattern compare file1.py file2.py
 ```
 
-## Configuration
+## Tree-Sitter Integration
 
-Environment variables:
-- `CODE_PATTERN_USE_MOCK`: Set to 'False' to use the real tree-sitter implementation (default: 'True')
+The analyzer supports two different implementations:
+
+1. **Mock Implementation**: A simpler regex-based implementation for quick demonstrations and testing
+2. **Real Tree-Sitter Implementation**: A production-ready implementation using tree-sitter for accurate parsing
+
+You can toggle between implementations in two ways:
+
+### Command-Line Flag
+
+All commands support a `--real/--mock` flag to select the implementation:
+
+```bash
+# Use the real tree-sitter implementation
+code-pattern analyze --file path/to/your/file.py --real
+
+# Use the mock implementation
+code-pattern analyze --file path/to/your/file.py --mock
+```
+
+### Environment Variable
+
+You can also set an environment variable to change the default:
+
+```bash
+# Set the default to real tree-sitter implementation
+export CODE_PATTERN_USE_MOCK=False
+
+# Run the command (will use real implementation by default)
+code-pattern analyze --file path/to/your/file.py
+```
+
+### Grammar Installation
+
+When using the real tree-sitter implementation, language grammars will be automatically downloaded and built as needed. This requires:
+
+- A C compiler (GCC, Clang, MSVC, etc.)
+- Git (optional, will use direct downloads if git is not available)
+- Python development headers
 
 ## Example Output
 
