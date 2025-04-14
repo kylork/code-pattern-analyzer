@@ -2,7 +2,11 @@
 
 A powerful tool for analyzing and identifying patterns in source code across multiple programming languages.
 
+## Overview
+
 ![Code Pattern Analyzer](https://img.shields.io/badge/Status-Prototype-blue)
+
+The Code Pattern Analyzer is a framework for detecting patterns in source code. It can identify common structures like functions and classes, as well as more complex design patterns and anti-patterns. This tool aims to help developers understand existing codebases, identify refactoring opportunities, and enforce coding standards.
 
 ## Features
 
@@ -12,6 +16,7 @@ A powerful tool for analyzing and identifying patterns in source code across mul
 - **Extensible Architecture**: Easily add new patterns and languages
 - **Command-Line Interface**: Simple CLI for integration into workflows
 - **Comparison Tools**: Compare pattern usage between files
+- **Web Interface**: User-friendly web UI for analyzing code and managing projects
 
 ## Pattern Types
 
@@ -32,6 +37,8 @@ A powerful tool for analyzing and identifying patterns in source code across mul
 
 ## Installation
 
+### From Source
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/code-pattern-analyzer.git
@@ -41,84 +48,56 @@ cd code-pattern-analyzer
 pip install -e .
 ```
 
+### With Docker
+
+```bash
+# Build the Docker image
+docker build -t code-pattern-analyzer .
+
+# Run the container
+docker run -v $(pwd)/sample-code:/code -w /code code-pattern-analyzer analyze --file sample.py
+```
+
 ## Usage
 
-### List Available Patterns
+### Command Line Interface
 
 ```bash
+# List available patterns
 code-pattern list-patterns
-```
 
-### List Pattern Categories
+# Analyze a file
+code-pattern analyze --file sample.py
 
-```bash
-code-pattern list-categories
-```
+# Analyze a directory
+code-pattern analyze --directory src/
 
-### Analyze a File
-
-```bash
-code-pattern analyze --file path/to/your/file.py
-```
-
-### Analyze with Specific Pattern
-
-```bash
-code-pattern analyze --file path/to/your/file.py --pattern singleton
-```
-
-### Analyze a Directory
-
-```bash
+# Generate a report
 code-pattern report /path/to/project --format html
-```
 
-### Compare Files
-
-```bash
+# Compare files
 code-pattern compare file1.py file2.py
 ```
 
-## Tree-Sitter Integration
+### Web Interface
 
-The analyzer supports two different implementations:
-
-1. **Mock Implementation**: A simpler regex-based implementation for quick demonstrations and testing
-2. **Real Tree-Sitter Implementation**: A production-ready implementation using tree-sitter for accurate parsing
-
-You can toggle between implementations in two ways:
-
-### Command-Line Flag
-
-All commands support a `--real/--mock` flag to select the implementation:
+The Code Pattern Analyzer includes a web interface for easier interaction:
 
 ```bash
-# Use the real tree-sitter implementation
-code-pattern analyze --file path/to/your/file.py --real
+# Set up the web UI
+./scripts/setup_web_ui.sh
 
-# Use the mock implementation
-code-pattern analyze --file path/to/your/file.py --mock
+# Start the web interface
+./scripts/start_web_ui.sh
 ```
 
-### Environment Variable
+The web interface provides:
+- File upload and direct code input
+- Project management
+- Interactive visualization of results
+- Pattern exploration
 
-You can also set an environment variable to change the default:
-
-```bash
-# Set the default to real tree-sitter implementation
-export CODE_PATTERN_USE_MOCK=False
-
-# Run the command (will use real implementation by default)
-code-pattern analyze --file path/to/your/file.py
-```
-
-### Grammar Installation
-
-When using the real tree-sitter implementation, language grammars will be automatically downloaded and built as needed. This requires:
-
-- A C compiler (GCC, Clang, MSVC, etc.)
-- Git (optional, will use direct downloads if git is not available)
-- Python development headers
+Visit http://localhost:3000 in your browser to access the web interface.
 
 ## Example Output
 
@@ -148,6 +127,7 @@ The Code Pattern Analyzer is built with a modular architecture:
 4. **Analyzer**: Coordinates analysis of files and directories
 5. **Reporter**: Generates reports in various formats
 6. **CLI**: Provides command-line interface
+7. **Web UI**: Provides user-friendly web interface
 
 ## Extending
 
