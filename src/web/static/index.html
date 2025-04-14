@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Pattern Analyzer API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .endpoint {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        .method {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .path {
+            font-family: monospace;
+            font-size: 16px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #2980b9;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Code Pattern Analyzer API</h1>
+    <p>
+        Welcome to the Code Pattern Analyzer API. This service provides endpoints for analyzing source code 
+        to identify patterns, design patterns, and code smells.
+    </p>
+    
+    <div>
+        <a href="/docs" class="button">Interactive API Documentation</a>
+    </div>
+    
+    <h2>Key Endpoints</h2>
+    
+    <div class="endpoint">
+        <p><span class="method">GET</span> <span class="path">/patterns</span></p>
+        <p>List all available patterns that can be detected.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">GET</span> <span class="path">/categories</span></p>
+        <p>List all available pattern categories and the patterns in each category.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">POST</span> <span class="path">/analyze</span></p>
+        <p>Analyze code content submitted in the request body.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">POST</span> <span class="path">/upload</span></p>
+        <p>Upload and analyze a single file.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">GET</span> <span class="path">/analysis/{analysis_id}</span></p>
+        <p>Get the results of a previous analysis.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">GET</span> <span class="path">/analysis/{analysis_id}/html</span></p>
+        <p>Get an HTML report for a previous analysis.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">POST</span> <span class="path">/projects</span></p>
+        <p>Create a new project for organizing multiple files.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">POST</span> <span class="path">/projects/{project_id}/files</span></p>
+        <p>Upload a file to a project.</p>
+    </div>
+    
+    <div class="endpoint">
+        <p><span class="method">POST</span> <span class="path">/projects/{project_id}/analyze</span></p>
+        <p>Analyze all files in a project.</p>
+    </div>
+    
+    <h2>Implementation Options</h2>
+    <p>
+        The analyzer supports two implementation modes:
+    </p>
+    <ul>
+        <li><strong>Real Implementation</strong>: Uses tree-sitter for accurate AST-based analysis (default)</li>
+        <li><strong>Mock Implementation</strong>: Uses regex-based matching for quick demonstration</li>
+    </ul>
+    <p>
+        Most endpoints accept a <code>use_mock</code> parameter to toggle between these modes.
+    </p>
+    
+    <h2>Further Information</h2>
+    <p>
+        For complete documentation including request and response schemas, visit the 
+        <a href="/docs">interactive API documentation</a>.
+    </p>
+</body>
+</html>
