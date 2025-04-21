@@ -35,9 +35,10 @@ class TestCodeParser(unittest.TestCase):
                 self.parser.parse_file(tmp.name)
                 
     def test_parse_code_unsupported_language(self):
-        # Test that parsing with an unsupported language raises ValueError
-        with self.assertRaises(ValueError):
-            self.parser.parse_code('print("hello")', 'unsupported')
+        # Test that parsing with an unsupported language logs an error
+        # The parser now logs an error instead of raising a ValueError
+        result = self.parser.parse_code('print("hello")', 'unsupported')
+        self.assertIsNone(result)
 
 if __name__ == '__main__':
     unittest.main()

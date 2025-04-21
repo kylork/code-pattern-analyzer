@@ -259,6 +259,257 @@ def patch_analyzer():
                         return mock_singleton_pattern.match(tree)
                     elif pattern_name == 'factory_method':
                         return mock_factory_pattern.match(tree)
+                    elif pattern_name == 'separation_of_concerns' or pattern_name == 'architectural_intent':
+                        # Mock implementation for architectural intent patterns
+                        # Detects layered architecture based on file paths
+                        file_path_str = str(file_path) if file_path else ""
+                        
+                        # Check for layered architecture directory structure
+                        if "examples/layered_architecture" in file_path_str:
+                            # Determine the layer from the file path
+                            layer = None
+                            if "controllers" in file_path_str:
+                                layer = "controller"
+                            elif "services" in file_path_str:
+                                layer = "service"
+                            elif "repositories" in file_path_str:
+                                layer = "repository"
+                            elif "models" in file_path_str:
+                                layer = "model"
+                            
+                            # Extract likely imports based on filename conventions
+                            imports = []
+                            
+                            # Simple mock of imports based on common layered architecture patterns
+                            if "controller" in file_path_str:
+                                imports.append("services.user_service")
+                            elif "service" in file_path_str:
+                                imports.append("repositories.user_repository")
+                            elif "repository" in file_path_str:
+                                imports.append("models.user")
+                            
+                            # Generate a mock component for this file
+                            if layer:
+                                logger.info(f"Mock detected {layer} layer in {file_path_str}")
+                                return [{
+                                    'type': 'component',
+                                    'name': file_path_str,
+                                    'path': file_path_str,
+                                    'language': language,
+                                    'layer': layer,
+                                    'domain': 'user' if 'user' in file_path_str else None,
+                                    'responsibilities': [layer],
+                                    'imports': imports
+                                }]
+                            else:
+                                logger.warning(f"Couldn't identify layer for {file_path_str}")
+                        
+                        # Check for information hiding pattern in the information_hiding example
+                        elif "examples/information_hiding" in file_path_str:
+                            component_type = "unknown"
+                            if "data_access.py" in file_path_str:
+                                component_type = "repository"
+                            elif "service_layer.py" in file_path_str:
+                                component_type = "service"
+                            elif "client.py" in file_path_str:
+                                component_type = "client"
+                            
+                            return [{
+                                'type': 'component',
+                                'name': file_path_str,
+                                'path': file_path_str,
+                                'language': language,
+                                'layer': component_type,
+                                'domain': 'user',
+                                'responsibilities': [component_type],
+                                'imports': []
+                            }]
+                            
+                        return []
+                        
+                    elif pattern_name == 'information_hiding':
+                        # Special handling for information hiding detection
+                        file_path_str = str(file_path) if file_path else ""
+                        
+                        # Mock implementation for information hiding in specific examples
+                        if "examples/information_hiding" in file_path_str:
+                            # Calculate mock information hiding metrics based on the file
+                            encapsulation_metrics = {
+                                'private_vars_count': 8 if "data_access.py" in file_path_str else 5,
+                                'protected_vars_count': 0,
+                                'getter_setter_count': 6 if "data_access.py" in file_path_str else 2,
+                                'property_count': 4 if "data_access.py" in file_path_str else 0,
+                                'public_method_count': 5 if "service_layer.py" in file_path_str else 4,
+                                'private_method_count': 3 if "service_layer.py" in file_path_str else 2,
+                                'encapsulation_ratio': 0.7 if "data_access.py" in file_path_str else 0.5,
+                                'public_api_size': 4,
+                                'private_impl_size': 8,
+                            }
+                            
+                            interface_metrics = {
+                                'defines_interface': "service_layer.py" in file_path_str or "data_access.py" in file_path_str,
+                                'implements_interface': "service_layer.py" in file_path_str or "data_access.py" in file_path_str,
+                                'abstract_class_count': 1 if "data_access.py" in file_path_str else 0,
+                                'interface_count': 2 if "service_layer.py" in file_path_str else 0,
+                                'interface_method_count': 3 if "service_layer.py" in file_path_str else 1,
+                                'implementation_method_count': 5,
+                                'abstraction_ratio': 0.8 if "service_layer.py" in file_path_str else 0.4,
+                            }
+                            
+                            module_metrics = {
+                                'explicit_exports': '__all__' in code,
+                                'internal_imports_count': 3,
+                                'external_imports_count': 1,
+                                'import_locality': 0.75,
+                                'package_private_count': 0,
+                                'public_count': 2,
+                                'boundary_clarity': 1.0 if '__all__' in code else 0.5,
+                            }
+                            
+                            # Calculate overall score
+                            info_hiding_score = 0.0
+                            
+                            if "data_access.py" in file_path_str:
+                                info_hiding_score = 0.85  # High encapsulation
+                            elif "service_layer.py" in file_path_str:
+                                info_hiding_score = 0.9  # High interface usage
+                            elif "client.py" in file_path_str:
+                                info_hiding_score = 0.6  # Good client-side usage
+                            
+                            logger.info(f"Mock detected information hiding in {file_path_str} with score {info_hiding_score}")
+                            
+                            return [{
+                                'type': 'component',
+                                'name': file_path_str,
+                                'path': file_path_str,
+                                'language': language,
+                                'info_hiding_score': info_hiding_score,
+                                'encapsulation': encapsulation_metrics,
+                                'interfaces': interface_metrics,
+                                'module_boundaries': module_metrics
+                            }]
+                        
+                        # Mock implementation for dependency inversion in specific examples
+                        elif "examples/dependency_inversion" in file_path_str:
+                            # Calculate mock dependency inversion metrics based on the file
+                            abstraction_metrics = {
+                                'defines_interface': "interfaces.py" in file_path_str,
+                                'implements_interface': "implementations.py" in file_path_str,
+                                'interface_count': 3 if "interfaces.py" in file_path_str else 0,
+                                'abstract_method_count': 6 if "interfaces.py" in file_path_str else 0,
+                                'concrete_method_count': 0 if "interfaces.py" in file_path_str else 12,
+                                'abstraction_ratio': 1.0 if "interfaces.py" in file_path_str else 0.0,
+                                'depends_on_interfaces': "high_level.py" in file_path_str or "client.py" in file_path_str,
+                                'interface_dependency_count': 3 if "high_level.py" in file_path_str else (2 if "client.py" in file_path_str else 0),
+                            }
+                            
+                            di_metrics = {
+                                'uses_di': "high_level.py" in file_path_str or "client.py" in file_path_str,
+                                'di_instance_count': 6 if "high_level.py" in file_path_str else (4 if "client.py" in file_path_str else 0),
+                                'constructor_injection': "high_level.py" in file_path_str or "client.py" in file_path_str,
+                                'setter_injection': False,
+                                'di_framework_usage': False,
+                                'di_annotations_count': 0,
+                            }
+                            
+                            factory_metrics = {
+                                'uses_factories': "factories.py" in file_path_str or "client.py" in file_path_str,
+                                'factory_method_count': 5 if "factories.py" in file_path_str else 0,
+                                'factory_class_count': 3 if "factories.py" in file_path_str else 0,
+                                'instance_creation_points': 8 if "factories.py" in file_path_str else (4 if "client.py" in file_path_str else 0),
+                            }
+                            
+                            # Calculate overall score
+                            dip_score = 0.0
+                            
+                            if "interfaces.py" in file_path_str:
+                                dip_score = 0.9  # Pure abstractions
+                            elif "implementations.py" in file_path_str:
+                                dip_score = 0.7  # Implementation details
+                            elif "factories.py" in file_path_str:
+                                dip_score = 0.8  # Factory patterns
+                            elif "high_level.py" in file_path_str:
+                                dip_score = 0.95  # High-level modules depending on abstractions
+                            elif "client.py" in file_path_str:
+                                dip_score = 0.85  # Wiring everything together
+                            
+                            logger.info(f"Mock detected dependency inversion in {file_path_str} with score {dip_score}")
+                            
+                            return [{
+                                'type': 'component',
+                                'name': file_path_str,
+                                'path': file_path_str,
+                                'language': language,
+                                'dip_score': dip_score,
+                                'abstractions': abstraction_metrics,
+                                'dependency_injection': di_metrics,
+                                'factory_patterns': factory_metrics
+                            }]
+                            
+                        return []
+                    
+                    elif pattern_name == 'dependency_inversion':
+                        # Special handling for dependency inversion detection
+                        file_path_str = str(file_path) if file_path else ""
+                        
+                        # Mock implementation for dependency inversion in specific examples
+                        if "examples/dependency_inversion" in file_path_str:
+                            # Calculate mock dependency inversion metrics based on the file
+                            abstraction_metrics = {
+                                'defines_interface': "interfaces.py" in file_path_str,
+                                'implements_interface': "implementations.py" in file_path_str,
+                                'interface_count': 3 if "interfaces.py" in file_path_str else 0,
+                                'abstract_method_count': 6 if "interfaces.py" in file_path_str else 0,
+                                'concrete_method_count': 0 if "interfaces.py" in file_path_str else 12,
+                                'abstraction_ratio': 1.0 if "interfaces.py" in file_path_str else 0.0,
+                                'depends_on_interfaces': "high_level.py" in file_path_str or "client.py" in file_path_str,
+                                'interface_dependency_count': 3 if "high_level.py" in file_path_str else (2 if "client.py" in file_path_str else 0),
+                            }
+                            
+                            di_metrics = {
+                                'uses_di': "high_level.py" in file_path_str or "client.py" in file_path_str,
+                                'di_instance_count': 6 if "high_level.py" in file_path_str else (4 if "client.py" in file_path_str else 0),
+                                'constructor_injection': "high_level.py" in file_path_str or "client.py" in file_path_str,
+                                'setter_injection': False,
+                                'di_framework_usage': False,
+                                'di_annotations_count': 0,
+                            }
+                            
+                            factory_metrics = {
+                                'uses_factories': "factories.py" in file_path_str or "client.py" in file_path_str,
+                                'factory_method_count': 5 if "factories.py" in file_path_str else 0,
+                                'factory_class_count': 3 if "factories.py" in file_path_str else 0,
+                                'instance_creation_points': 8 if "factories.py" in file_path_str else (4 if "client.py" in file_path_str else 0),
+                            }
+                            
+                            # Calculate overall score
+                            dip_score = 0.0
+                            
+                            if "interfaces.py" in file_path_str:
+                                dip_score = 0.9  # Pure abstractions
+                            elif "implementations.py" in file_path_str:
+                                dip_score = 0.7  # Implementation details
+                            elif "factories.py" in file_path_str:
+                                dip_score = 0.8  # Factory patterns
+                            elif "high_level.py" in file_path_str:
+                                dip_score = 0.95  # High-level modules depending on abstractions
+                            elif "client.py" in file_path_str:
+                                dip_score = 0.85  # Wiring everything together
+                            
+                            logger.info(f"Mock detected dependency inversion in {file_path_str} with score {dip_score}")
+                            
+                            return [{
+                                'type': 'component',
+                                'name': file_path_str,
+                                'path': file_path_str,
+                                'language': language,
+                                'dip_score': dip_score,
+                                'abstractions': abstraction_metrics,
+                                'dependency_injection': di_metrics,
+                                'factory_patterns': factory_metrics
+                            }]
+                            
+                        return []
                     
                     # Default: return empty list
                     return []

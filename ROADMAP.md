@@ -1,34 +1,61 @@
 # Code Pattern Analyzer Roadmap
 
-This document outlines the future development plan for the Code Pattern Analyzer.
+This document outlines the development plan for the Code Pattern Analyzer, tracking both completed work and future directions.
 
-## Phase 1: Core Functionality (Current)
+## Phase 1: Core Functionality ✅
 
 - [x] Basic architecture and framework
 - [x] Mock pattern detection
 - [x] Command-line interface
-- [ ] Implement real tree-sitter parsing
-- [ ] Basic pattern recognition for functions and classes
+- [x] Basic pattern recognition for functions and classes
+- [x] Pattern registry and composite pattern system
+- [x] Build integration with tree-sitter
 
-## Phase 2: Pattern Library
+## Phase 2: Design Pattern Detection ✅
 
-- [ ] Design patterns
-  - [ ] Factory Method
-  - [ ] Singleton
-  - [ ] Observer
-  - [ ] Strategy
-  - [ ] Command
-- [ ] Anti-patterns
-  - [ ] God objects
-  - [ ] Excessive method length
-  - [ ] Deep nesting
-  - [ ] Duplicate code
-- [ ] Language-specific idioms
-  - [ ] Python: decorators, context managers
-  - [ ] JavaScript: promises, closures
-  - [ ] TypeScript: interfaces, generics
+- [x] Design patterns
+  - [x] Factory Method
+  - [x] Singleton
+  - [x] Observer
+  - [x] Decorator
+  - [x] Enhanced Strategy detection
+- [x] Code smells
+  - [x] Long methods
+  - [x] Deep nesting
+  - [x] Complex conditions
 
-## Phase 3: Advanced Analysis
+## Phase 3: Architectural Intent Detection ✅
+
+- [x] Multi-file pattern detection
+- [x] Component relationship analysis
+- [x] Separation of Concerns detection
+  - [x] Layer-based architecture
+  - [x] Domain-based organization
+- [x] Information Hiding detection
+  - [x] Encapsulation analysis
+  - [x] Interface usage analysis
+  - [x] Module boundary analysis
+- [x] Dependency Inversion detection
+  - [x] Abstraction usage analysis
+  - [x] Dependency injection detection
+  - [x] Factory pattern integration
+- [x] Architectural health scoring
+- [x] Recommendations for architectural improvements
+
+## Phase 4: Architectural Style Detection (Current)
+
+- [x] Nexus architectural style system
+- [x] Hexagonal (Ports and Adapters) architecture detection
+- [x] Clean Architecture detection
+- [x] Microservices architecture detection
+- [x] Event-driven architecture detection
+  - [x] CQRS pattern detection
+  - [x] Event Sourcing pattern detection
+- [x] Layered architecture detection
+- [x] Visualization of architectural patterns
+- [ ] Architectural anti-pattern detection
+
+## Phase 5: Advanced Analysis
 
 - [ ] Control flow analysis
 - [ ] Data flow analysis
@@ -36,40 +63,48 @@ This document outlines the future development plan for the Code Pattern Analyzer
   - [ ] Cyclomatic complexity
   - [ ] Cognitive complexity
   - [ ] Maintainability index
-- [ ] Multi-file pattern detection
 - [ ] Dependency graph generation
 
-## Phase 4: Transformation Engine
+## Phase 6: Transformation Engine
 
 - [ ] Pattern-based refactoring suggestions
 - [ ] Code transformation templates
 - [ ] Interactive refactoring
 - [ ] Batch transformation operations
 
-## Phase 5: IDE Integration
+## Phase 7: Web Integration & Visualization
 
-- [ ] VS Code extension
-- [ ] IntelliJ IDEA plugin
-- [ ] Language server protocol support
+- [ ] Web UI for analysis results
+- [ ] Interactive pattern visualizations
+- [ ] Architectural diagrams
+- [ ] Pattern relationship graphs
+- [ ] Codebase structure maps
 
-## Phase 6: Machine Learning Integration
+## Phase 8: Machine Learning Integration
 
 - [ ] Training data generation from existing codebases
 - [ ] Pattern detection with ML models
 - [ ] Anomaly detection for unusual code patterns
 - [ ] Personalized refactoring suggestions
 
-## Technical Debt / Improvements
+## Phase 9: IDE Integration
+
+- [ ] VS Code extension
+- [ ] IntelliJ IDEA plugin
+- [ ] Language server protocol support
+
+## Technical Improvements
 
 - [ ] Comprehensive test suite
 - [ ] Performance optimization for large codebases
-- [ ] Documentation and examples
+- [x] Documentation and examples
 - [ ] CI/CD pipeline
 - [ ] Docker containers for easier deployment
 
-## Stretch Goals
+## Philosophical Explorations
 
-- [ ] Web interface for analysis results
-- [ ] Integration with code review tools
-- [ ] Natural language query interface for pattern finding
-- [ ] Interactive code exploration
+- [x] Bridge human conceptual understanding with machine-parsable representations
+- [x] Formalize design principles in ways that can be detected and validated
+- [x] Develop a language for describing architectural intentions
+- [x] Create bidirectional translation between high-level intent and implementation details
+- [ ] Explore AI alignment implications of design pattern formalization

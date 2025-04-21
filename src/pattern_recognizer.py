@@ -106,16 +106,24 @@ class PatternRecognizer:
         # Filter patterns by language support
         patterns_to_match = [p for p in patterns_to_match if self._supports_language(p, language)]
         
+        logger.debug(f"Matching {len(patterns_to_match)} patterns for {file_path}")
+        
         # Apply each pattern
         results: Dict[str, List[Dict]] = {}
         
         for pattern in patterns_to_match:
             try:
+                logger.debug(f"Attempting to match pattern {pattern.name} for {file_path}")
                 matches = pattern.match(tree, code, language, file_path)
                 if matches:
                     results[pattern.name] = matches
+                    logger.debug(f"Found {len(matches)} matches for pattern {pattern.name}")
+                else:
+                    logger.debug(f"No matches found for pattern {pattern.name}")
             except Exception as e:
                 logger.error(f"Error matching pattern '{pattern.name}': {e}")
+                import traceback
+                logger.error(traceback.format_exc())
         
         return results
     

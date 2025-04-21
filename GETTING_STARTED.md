@@ -14,7 +14,7 @@ This guide will help you get started with the Code Pattern Analyzer.
 
 1. Clone or download the repository:
    ```bash
-   git clone https://github.com/yourusername/code-pattern-analyzer.git
+   git clone https://github.com/kylork/code-pattern-analyzer.git
    cd code-pattern-analyzer
    ```
 

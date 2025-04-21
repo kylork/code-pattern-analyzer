@@ -8,11 +8,17 @@ A powerful tool for analyzing and identifying patterns in source code across mul
 
 The Code Pattern Analyzer is a framework for detecting patterns in source code. It can identify common structures like functions and classes, as well as more complex design patterns and anti-patterns. This tool aims to help developers understand existing codebases, identify refactoring opportunities, and enforce coding standards.
 
+> **New Contributors**: Before diving into the code, please read the following documents in order:
+> 1. [PHILOSOPHY.md](PHILOSOPHY.md) - Understanding the project's vision and purpose
+> 2. [ONBOARDING.md](ONBOARDING.md) - Guide for new contributors
+> 3. [CLAUDE.md](CLAUDE.md) - Technical implementation guide
+
 ## Features
 
 - **Multi-Language Support**: Analyze code in Python, JavaScript, TypeScript, Ruby, Java, and more
 - **Pattern Detection**: Identify functions, classes, design patterns, and code smells
 - **Interactive Reports**: Generate detailed HTML reports with visualizations
+- **Architecture Visualization**: Visualize detected architectural patterns with interactive diagrams
 - **Extensible Architecture**: Easily add new patterns and languages
 - **Command-Line Interface**: Simple CLI for integration into workflows
 - **Comparison Tools**: Compare pattern usage between files
@@ -29,11 +35,23 @@ The Code Pattern Analyzer is a framework for detecting patterns in source code. 
 ### Design Patterns
 - Singleton pattern (multiple variants)
 - Factory Method pattern
+- Observer pattern
+- Decorator pattern
+- Strategy pattern
 
 ### Code Quality Patterns
 - Long methods
 - Deeply nested code
 - Complex conditional expressions
+
+### Architectural Patterns
+- Separation of Concerns
+- Information Hiding
+- Dependency Inversion
+- Layered Architecture
+- Hexagonal Architecture
+- Clean Architecture
+- Event-Driven Architecture
 
 ## Installation
 
@@ -41,7 +59,7 @@ The Code Pattern Analyzer is a framework for detecting patterns in source code. 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/code-pattern-analyzer.git
+git clone https://github.com/kylork/code-pattern-analyzer.git
 cd code-pattern-analyzer
 
 # Install in development mode
@@ -74,6 +92,9 @@ code-pattern analyze --directory src/
 
 # Generate a report
 code-pattern report /path/to/project --format html
+
+# Visualize architecture
+code-pattern visualize /path/to/project --pattern layered_architecture
 
 # Compare files
 code-pattern compare file1.py file2.py
@@ -143,4 +164,4 @@ See [ROADMAP.md](ROADMAP.md) for planned future developments.
 
 ## License
 
-MIT License
+MIT License"}}

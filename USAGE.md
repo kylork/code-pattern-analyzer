@@ -8,7 +8,7 @@ This guide explains how to set up and use the Code Pattern Analyzer.
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/code-pattern-analyzer.git
+   git clone https://github.com/kylork/code-pattern-analyzer.git
    cd code-pattern-analyzer
    ```
 
