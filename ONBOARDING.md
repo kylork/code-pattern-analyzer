@@ -8,10 +8,12 @@ To effectively understand and contribute to this project, please follow this spe
 
 1. **Start here: PHILOSOPHY.md** - Understand the deeper purpose and vision
 2. **Next: Chat logs** - Review the development journey and philosophical discussions
-   - Location: `/root/claude-code-demo/code-pattern-analyzer-chat-notes/`
-   - Read in order: 01, 02, 03 (chronological)
+   - Location: `/root/claude-code-demo/code-pattern-analyzer-chats/code-pattern-analyzer-chat-01.txt`
+   - Read the entire file to understand the project's development process and reasoning
+   - This file is more to familiarize you with the genesis of the project since it has greatly developed since this
 3. **Then: CLAUDE.md** - Technical reference for the implementation
-4. **Finally: ROADMAP.md** - Current status and future development plans
+4. **Next: PROJECT_STRUCTURE.md** - Current project structure and organization
+5. **Finally: ROADMAP.md** - Current status and future development plans
 
 ## Key Concepts to Internalize
 
