@@ -49,7 +49,14 @@ We've successfully built a comprehensive code pattern analyzer that can detect v
    - Interactive analysis visualization
    - Chart.js integration for data visualization
 
-7. **Advanced Features**
+7. **Architecture Analysis**
+   - Architectural intent detection (Separation of Concerns, Information Hiding, Dependency Inversion)
+   - Architectural style detection (Layered, Hexagonal, Clean, Microservices, Event-Driven)
+   - Architectural anti-pattern detection (Tight Coupling, Dependency Cycles, Architectural Erosion, God Component)
+   - Architecture visualization and scoring
+   - Architectural improvement recommendations
+
+8. **Advanced Features**
    - Parallel processing for large codebases
    - Pattern comparison between files
    - Batch processing utilities

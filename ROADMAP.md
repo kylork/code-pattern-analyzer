@@ -42,7 +42,7 @@ This document outlines the development plan for the Code Pattern Analyzer, track
 - [x] Architectural health scoring
 - [x] Recommendations for architectural improvements
 
-## Phase 4: Architectural Style Detection (Current)
+## Phase 4: Architectural Style Detection ✅
 
 - [x] Nexus architectural style system
 - [x] Hexagonal (Ports and Adapters) architecture detection
@@ -53,9 +53,13 @@ This document outlines the development plan for the Code Pattern Analyzer, track
   - [x] Event Sourcing pattern detection
 - [x] Layered architecture detection
 - [x] Visualization of architectural patterns
-- [ ] Architectural anti-pattern detection
+- [x] Architectural anti-pattern detection
+  - [x] Tight coupling detection
+  - [x] Dependency cycle detection
+  - [x] Architectural erosion detection
+  - [x] God component detection
 
-## Phase 5: Advanced Analysis
+## Phase 5: Advanced Analysis (Current)
 
 - [ ] Control flow analysis
 - [ ] Data flow analysis
