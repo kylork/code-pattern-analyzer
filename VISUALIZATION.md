@@ -1,30 +1,146 @@
-# Architectural Pattern Visualization
+# Advanced Visualization in Code Pattern Analyzer
 
-The Code Pattern Analyzer now includes advanced visualization capabilities for architectural patterns. This document provides an overview of the visualization features and how to use them.
+The Code Pattern Analyzer includes sophisticated visualization capabilities to help you understand code architecture, relationships between components, and potential issues in your codebase.
 
-## Overview
+## Visualization Types
 
-Visualizing architectural patterns helps in:
+### 1. Force-Directed Component Graph
 
-1. Better understanding of complex code organization
-2. Identifying potential issues in the architecture
-3. Communicating architectural concepts to team members
-4. Documenting architectural decisions and evolution
+This interactive visualization shows components and their relationships using a physics-based force-directed layout algorithm. It allows you to:
 
-## Supported Visualizations
+- See all components in your codebase
+- Understand how components are related
+- Identify dependency cycles and architectural violations
+- Group components by layer, module, or type
+- Filter components to focus on specific areas
 
-### Layered Architecture
+### 2. Architecture Visualization
 
-The layered architecture visualization provides:
+Specialized visualizations for different architectural styles:
 
-- Visual representation of all detected layers
-- Component counts for each layer
-- Interactive dependency graph showing connections between layers
-- Highlighting of dependency violations
-- Detailed statistics on violations
-- Recommendations for improving the architecture
+- **Layered Architecture**: Shows layers and inter-layer dependencies
+- **Hexagonal Architecture**: Visualizes the core, ports, and adapters
+- **Clean Architecture**: Displays entities, use cases, interfaces, and frameworks
+- **Event-Driven Architecture**: Shows event producers, consumers, and message flows
+- **Microservices Architecture**: Displays service boundaries and communication patterns
 
-#### Sample Output
+### 3. Anti-Pattern Visualization
+
+Helps you identify and understand architectural anti-patterns:
+
+- **Dependency Cycles**: Shows circular dependencies between components
+- **God Components**: Visualizes overly complex components with too many responsibilities
+- **Tight Coupling**: Highlights components with excessive dependencies
+- **Architectural Erosion**: Shows where architectural boundaries have been violated
+
+## Using Visualizations
+
+### Command Line
+
+Generate visualizations using the provided scripts:
+
+```bash
+# Generate a force-directed component visualization
+python run_component_visualization.py /path/to/project --style layered
+
+# Analyze and visualize architectural anti-patterns
+python run_anti_pattern_analysis.py /path/to/project
+
+# Compare different architectural approaches
+python compare_architectures.py
+
+# Visualize architecture evolution over time
+python simulate_architecture_evolution.py
+
+# Using CLI commands
+code-pattern visualize /path/to/project --pattern layered_architecture
+```
+
+### Web Interface
+
+The web interface provides an interactive way to generate and explore visualizations:
+
+1. Start the web interface:
+   ```bash
+   ./scripts/start_web_ui.sh
+   ```
+
+2. Navigate to http://localhost:3000 in your browser
+
+3. Upload your project or select an existing one
+
+4. Click "Visualize" to generate interactive visualizations
+
+### Sharing Visualizations
+
+You can create portable, self-contained visualizations to share with others:
+
+```bash
+# Create a portable visualization bundle
+python view_visualization.py --bundle reports/component_visualization.html --output-dir ./portable_visualizations
+```
+
+This creates a directory with the visualization and all required files that can be shared with others.
+
+## Visualization Features
+
+### Interactive Components
+
+- **Zoom & Pan**: Navigate through large visualizations
+- **Filtering**: Focus on specific components or layers
+- **Grouping**: Organize components by various criteria
+- **Component Details**: Click on components to see detailed information
+- **Highlighting**: Emphasize violations and important relationships
+
+### Customization Options
+
+Customize your visualizations with various options:
+
+```bash
+# Customize the visualization
+python run_component_visualization.py /path/to/project \
+  --style layered \
+  --title "My Project Architecture" \
+  --output custom_visualization.html \
+  --open
+```
+
+## Technical Implementation
+
+The visualizations are built using:
+
+- **HTML/CSS**: For responsive layout and styling
+- **D3.js**: For interactive, data-driven visualizations
+- **JavaScript**: For dynamic user interactions
+- **SVG**: For scalable vector graphics
+- **Chart.js**: For statistical charts and graphs
+
+Implementation principles:
+
+1. **Interactive**: Users can explore the visualization by interacting with elements
+2. **Responsive**: Layouts adjust to different screen sizes
+3. **Accessible**: Clear visual indicators with text alternatives
+4. **Detailed**: Providing comprehensive information while maintaining clarity
+5. **Actionable**: Including specific recommendations based on findings
+
+## Examples
+
+The repository includes several example projects with pre-generated visualizations:
+
+- `examples/layered_architecture/` - Classic layered architecture example
+- `examples/dependency_inversion/` - Example showing dependency inversion principle
+- `examples/event_driven/` - Event-driven architecture with CQRS and event sourcing
+- `examples/information_hiding/` - Information hiding principle in action
+
+## Best Practices
+
+- Generate visualizations regularly as your codebase evolves
+- Compare visualizations over time to identify architectural drift
+- Share visualizations with your team to ensure common understanding
+- Use visualizations during code reviews to maintain architectural integrity
+- Combine multiple visualization types for comprehensive understanding
+
+## Sample Output
 
 The layered architecture visualization includes:
 
@@ -52,90 +168,3 @@ The layered architecture visualization includes:
 5. **Recommendations**
    - Actionable suggestions for improving the architecture
    - Specific advice based on detected issues
-
-## Usage
-
-### Command-line
-
-To generate visualizations from the command line:
-
-```bash
-# Visualize the layered architecture in a project
-code-pattern visualize /path/to/project --pattern layered_architecture
-
-# Analyze and visualize in one command
-code-pattern analyze /path/to/project --visualize
-```
-
-### Programmatic Usage
-
-You can use the visualization components directly in your code:
-
-```python
-from src.patterns.architectural_styles import LayeredArchitecturePattern
-from src.visualization import LayeredArchitectureVisualizer
-
-# Run the analysis
-pattern = LayeredArchitecturePattern()
-results = pattern.analyze('/path/to/project')
-
-# Create the visualizer and generate the visualization
-visualizer = LayeredArchitectureVisualizer()
-output_path = visualizer.visualize(results)
-
-print(f"Visualization saved to: {output_path}")
-```
-
-### Demo Script
-
-For a quick demonstration of the visualization capabilities, you can run:
-
-```bash
-# Run the layered architecture visualization demo
-./visualize_layered_architecture.py
-```
-
-This will create a sample layered architecture analysis with both valid and invalid dependencies, and generate a visualization in the `reports/` directory.
-
-## Technical Implementation
-
-The visualizations are built using:
-
-- HTML/CSS for layout and styling
-- D3.js for interactive graphs
-- JS for user interactions
-- SVG for vector graphics
-
-The implementation follows these principles:
-
-1. **Interactive**: Users can explore the visualization by interacting with elements
-2. **Responsive**: Layouts adjust to different screen sizes
-3. **Accessible**: Clear visual indicators with text alternatives
-4. **Detailed**: Providing comprehensive information while maintaining clarity
-5. **Actionable**: Including specific recommendations based on findings
-
-## Future Plans
-
-We plan to extend the visualization capabilities to include:
-
-1. **Other Architectural Styles**
-   - Hexagonal/Ports and Adapters architecture
-   - Clean architecture
-   - Microservices architecture
-   - Event-driven architecture
-
-2. **Enhanced Interactive Features**
-   - Filtering options for large codebases
-   - Zooming and panning for complex graphs
-   - Collapsible sections for focused analysis
-   - Saved view states for sharing
-
-3. **Timeline Views**
-   - Showing architectural evolution over time
-   - Comparing architecture between versions
-   - Tracking migration progress
-
-4. **Integration with IDEs**
-   - Visual Studio Code extension
-   - IntelliJ IDEA plugin
-   - Real-time architectural guidance
