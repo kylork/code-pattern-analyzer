@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 
 from .analyzer import CodeAnalyzer
-from .commands import report, compare, architecture_command
+from .commands import report, compare, architecture_command, refactoring
 from .web.cli import web_cli
 
 # Set up logging
@@ -32,6 +32,7 @@ def cli():
 cli.add_command(report)
 cli.add_command(compare)
 cli.add_command(architecture_command, name="architecture")
+cli.add_command(refactoring, name="refactoring")
 
 # Add web server commands
 cli.add_command(web_cli, name="web")

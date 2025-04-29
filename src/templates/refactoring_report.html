@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Pattern Analyzer - Refactoring Suggestions</title>
+    <style>
+        :root {
+            --critical-color: #ff4d4d;
+            --high-color: #ff9933;
+            --medium-color: #ffcc00;
+            --low-color: #99cc33;
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --light: #ecf0f1;
+            --accent: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 4px solid var(--accent);
+            margin-bottom: 2rem;
+        }
+        
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+        
+        header h1 {
+            color: white;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .impact-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .impact-stat {
+            min-width: 120px;
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .impact-critical { background-color: var(--critical-color); }
+        .impact-high { background-color: var(--high-color); }
+        .impact-medium { background-color: var(--medium-color); color: #333; }
+        .impact-low { background-color: var(--low-color); color: #333; }
+        
+        .filters {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .filter-label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .filter-checkbox {
+            margin-right: 0.3rem;
+        }
+        
+        .filter-button {
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+        }
+        
+        .filter-button.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .suggestions {
+            margin-bottom: 2rem;
+        }
+        
+        .suggestion-card {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #ccc;
+        }
+        
+        .suggestion-critical { border-left-color: var(--critical-color); }
+        .suggestion-high { border-left-color: var(--high-color); }
+        .suggestion-medium { border-left-color: var(--medium-color); }
+        .suggestion-low { border-left-color: var(--low-color); }
+        
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .suggestion-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--primary);
+            flex: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .suggestion-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .suggestion-tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            background-color: var(--accent);
+        }
+        
+        .tag-type { background-color: #9b59b6; }
+        .tag-impact-critical { background-color: var(--critical-color); }
+        .tag-impact-high { background-color: var(--high-color); }
+        .tag-impact-medium { background-color: var(--medium-color); color: #333; }
+        .tag-impact-low { background-color: var(--low-color); color: #333; }
+        .tag-source { background-color: #1abc9c; }
+        
+        .suggestion-file {
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-family: monospace;
+        }
+        
+        .suggestion-description {
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .suggestion-details {
+            margin-bottom: 1rem;
+        }
+        
+        .details-section {
+            margin-bottom: 1rem;
+        }
+        
+        .details-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        ul.benefits-list {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        
+        .code-blocks {
+            margin-top: 1rem;
+        }
+        
+        .code-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .effort-label {
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .effort-scale {
+            display: inline-flex;
+            height: 10px;
+            width: 100px;
+            background-color: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .effort-fill {
+            background-color: var(--accent);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .suggestion-action {
+            margin-top: 1rem;
+            text-align: right;
+        }
+        
+        .action-button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .action-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .toggle-details {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+            font-size: 0.9rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        footer {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .stats, .impact-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-card, .impact-stat {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .suggestion-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Code Pattern Analyzer - Refactoring Suggestions</h1>
+        <p>Generated on <span id="report-date">{{ generation_date }}</span></p>
+    </header>
+    
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Suggestions</div>
+                <div class="stat-value" id="total-count">{{ total_count }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Files Affected</div>
+                <div class="stat-value" id="files-count">{{ files_count }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Refactoring Types</div>
+                <div class="stat-value" id="types-count">{{ types_count }}</div>
+            </div>
+        </div>
+        
+        <div class="impact-stats">
+            <div class="impact-stat impact-critical">
+                <div class="stat-label">Critical</div>
+                <div class="stat-value" id="critical-count">{{ critical_count }}</div>
+            </div>
+            
+            <div class="impact-stat impact-high">
+                <div class="stat-label">High</div>
+                <div class="stat-value" id="high-count">{{ high_count }}</div>
+            </div>
+            
+            <div class="impact-stat impact-medium">
+                <div class="stat-label">Medium</div>
+                <div class="stat-value" id="medium-count">{{ medium_count }}</div>
+            </div>
+            
+            <div class="impact-stat impact-low">
+                <div class="stat-label">Low</div>
+                <div class="stat-value" id="low-count">{{ low_count }}</div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <h3>Filters</h3>
+            
+            <div class="filter-group">
+                <div class="filter-label">Impact Level</div>
+                <div class="filter-options" id="impact-filters">
+                    <label class="filter-button active" data-filter="impact" data-value="critical">
+                        <input type="checkbox" class="filter-checkbox" checked>
+                        Critical
+                    </label>
+                    <label class="filter-button active" data-filter="impact" data-value="high">
+                        <input type="checkbox" class="filter-checkbox" checked>
+                        High
+                    </label>
+                    <label class="filter-button active" data-filter="impact" data-value="medium">
+                        <input type="checkbox" class="filter-checkbox" checked>
+                        Medium
+                    </label>
+                    <label class="filter-button active" data-filter="impact" data-value="low">
+                        <input type="checkbox" class="filter-checkbox" checked>
+                        Low
+                    </label>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <div class="filter-label">Refactoring Type</div>
+                <div class="filter-options" id="type-filters">
+                    <!-- Will be populated dynamically -->
+                    {% for type in refactoring_types %}
+                    <label class="filter-button active" data-filter="type" data-value="{{ type }}">
+                        <input type="checkbox" class="filter-checkbox" checked>
+                        {{ type }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <div class="filter-label">Source</div>
+                <div class="filter-options" id="source-filters">
+                    <!-- Will be populated dynamically -->
+                    {% for source in suggestion_sources %}
+                    <label class="filter-button active" data-filter="source" data-value="{{ source }}">
+                        <input type="checkbox" class="filter-checkbox" checked>
+                        {{ source }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="suggestions" id="suggestions-container">
+            <!-- Will be populated dynamically -->
+            {% for suggestion in suggestions %}
+            <div class="suggestion-card suggestion-{{ suggestion.impact }}" 
+                 data-impact="{{ suggestion.impact }}" 
+                 data-type="{{ suggestion.refactoring_type }}" 
+                 data-source="{{ suggestion.source }}">
+                <div class="suggestion-header">
+                    <h3 class="suggestion-title">{{ suggestion.description }}</h3>
+                    <div class="suggestion-meta">
+                        <span class="suggestion-tag tag-type">{{ suggestion.refactoring_type }}</span>
+                        <span class="suggestion-tag tag-impact-{{ suggestion.impact }}">{{ suggestion.impact }}</span>
+                        <span class="suggestion-tag tag-source">{{ suggestion.source }}</span>
+                    </div>
+                </div>
+                
+                <div class="suggestion-file">
+                    <strong>File:</strong> {{ suggestion.file_path }}
+                    <strong>Lines:</strong> {{ suggestion.line_range[0] }}-{{ suggestion.line_range[1] }}
+                </div>
+                
+                <div class="suggestion-description">
+                    {{ suggestion.description }}
+                </div>
+                
+                <div class="suggestion-details">
+                    {% if suggestion.benefits %}
+                    <div class="details-section">
+                        <span class="details-title">Benefits:</span>
+                        <ul class="benefits-list">
+                            {% for benefit in suggestion.benefits %}
+                            <li>{{ benefit }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    {% if suggestion.effort %}
+                    <div class="details-section">
+                        <span class="details-title">Effort:</span>
+                        <span class="effort-label">{{ suggestion.effort }}/5</span>
+                        <div class="effort-scale">
+                            <div class="effort-fill" style="width: {{ suggestion.effort * 20 }}%;"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if suggestion.before_code and suggestion.after_code %}
+                    <div class="details-section">
+                        <button class="toggle-details" onclick="toggleCodeBlocks(this)">Show code example</button>
+                        <div class="code-blocks hidden">
+                            <div class="before-code">
+                                <div class="code-title">Current Code:</div>
+                                <pre class="code-block">{{ suggestion.before_code }}</pre>
+                            </div>
+                            <div class="after-code">
+                                <div class="code-title">Suggested Code:</div>
+                                <pre class="code-block">{{ suggestion.after_code }}</pre>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if suggestion.details %}
+                    <div class="details-section">
+                        <button class="toggle-details" onclick="toggleDetails(this)">Show additional details</button>
+                        <div class="additional-details hidden">
+                            <pre class="code-block">{{ suggestion.details | tojson(indent=2) }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <footer>
+        <p>Code Pattern Analyzer - Refactoring Suggestions</p>
+    </footer>
+    
+    <script>
+        // Toggle code blocks
+        function toggleCodeBlocks(button) {
+            const codeBlocks = button.nextElementSibling;
+            if (codeBlocks.classList.contains('hidden')) {
+                codeBlocks.classList.remove('hidden');
+                button.textContent = 'Hide code example';
+            } else {
+                codeBlocks.classList.add('hidden');
+                button.textContent = 'Show code example';
+            }
+        }
+        
+        // Toggle additional details
+        function toggleDetails(button) {
+            const details = button.nextElementSibling;
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden');
+                button.textContent = 'Hide additional details';
+            } else {
+                details.classList.add('hidden');
+                button.textContent = 'Show additional details';
+            }
+        }
+        
+        // Filtering logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-button');
+            const suggestions = document.querySelectorAll('.suggestion-card');
+            
+            // Initialize filter state
+            const filterState = {
+                impact: ['critical', 'high', 'medium', 'low'],
+                type: [],
+                source: []
+            };
+            
+            // Populate initial type and source filters
+            suggestions.forEach(suggestion => {
+                const type = suggestion.dataset.type;
+                const source = suggestion.dataset.source;
+                
+                if (!filterState.type.includes(type)) {
+                    filterState.type.push(type);
+                }
+                
+                if (!filterState.source.includes(source)) {
+                    filterState.source.push(source);
+                }
+            });
+            
+            // Filter click event
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filterType = this.dataset.filter;
+                    const filterValue = this.dataset.value;
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    
+                    // Toggle active state
+                    this.classList.toggle('active');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    // Update filter state
+                    if (checkbox.checked) {
+                        if (!filterState[filterType].includes(filterValue)) {
+                            filterState[filterType].push(filterValue);
+                        }
+                    } else {
+                        const index = filterState[filterType].indexOf(filterValue);
+                        if (index !== -1) {
+                            filterState[filterType].splice(index, 1);
+                        }
+                    }
+                    
+                    // Apply filters
+                    applyFilters();
+                });
+            });
+            
+            // Apply filters function
+            function applyFilters() {
+                suggestions.forEach(suggestion => {
+                    const impact = suggestion.dataset.impact;
+                    const type = suggestion.dataset.type;
+                    const source = suggestion.dataset.source;
+                    
+                    const matchImpact = filterState.impact.includes(impact);
+                    const matchType = filterState.type.includes(type);
+                    const matchSource = filterState.source.includes(source);
+                    
+                    if (matchImpact && matchType && matchSource) {
+                        suggestion.style.display = 'block';
+                    } else {
+                        suggestion.style.display = 'none';
+                    }
+                });
+                
+                // Update visible counts
+                updateCounts();
+            }
+            
+            // Update displayed counts based on visible suggestions
+            function updateCounts() {
+                let totalVisible = 0;
+                let criticalVisible = 0;
+                let highVisible = 0;
+                let mediumVisible = 0;
+                let lowVisible = 0;
+                
+                const visibleFiles = new Set();
+                const visibleTypes = new Set();
+                
+                suggestions.forEach(suggestion => {
+                    if (suggestion.style.display !== 'none') {
+                        totalVisible++;
+                        
+                        const impact = suggestion.dataset.impact;
+                        if (impact === 'critical') criticalVisible++;
+                        if (impact === 'high') highVisible++;
+                        if (impact === 'medium') mediumVisible++;
+                        if (impact === 'low') lowVisible++;
+                        
+                        visibleFiles.add(suggestion.querySelector('.suggestion-file').textContent);
+                        visibleTypes.add(suggestion.dataset.type);
+                    }
+                });
+                
+                // Update counters
+                document.getElementById('total-count').textContent = totalVisible;
+                document.getElementById('critical-count').textContent = criticalVisible;
+                document.getElementById('high-count').textContent = highVisible;
+                document.getElementById('medium-count').textContent = mediumVisible;
+                document.getElementById('low-count').textContent = lowVisible;
+                document.getElementById('files-count').textContent = visibleFiles.size;
+                document.getElementById('types-count').textContent = visibleTypes.size;
+            }
+        });
+    </script>
+</body>
+</html>

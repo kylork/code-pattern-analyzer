@@ -22,6 +22,7 @@ The Code Pattern Analyzer is a framework for detecting patterns in source code. 
 - **Architecture Visualization**: Visualize detected architectural patterns with interactive diagrams
 - **Code Complexity Metrics**: Analyze cyclomatic complexity, cognitive complexity, and maintainability index
 - **Code-Pattern Linkage**: Bidirectional linking between visualizations and code implementations
+- **Smart Refactoring Suggestions**: AI-powered refactoring recommendations with automated code transformations
 - **Extensible Architecture**: Easily add new patterns and languages
 - **Command-Line Interface**: Simple CLI for integration into workflows
 - **Comparison Tools**: Compare pattern usage between files
@@ -155,6 +156,18 @@ code-pattern anti-patterns /path/to/project --format html
 
 # Analyze code complexity metrics
 code-pattern complexity /path/to/project --format html
+
+# Generate refactoring suggestions
+code-pattern refactoring suggest /path/to/project --output suggestions.html --format html 
+
+# Interactive refactoring session
+code-pattern refactoring interactive /path/to/project
+
+# Apply pattern transformations
+code-pattern refactoring transform /path/to/project --pattern factory --apply
+
+# Batch refactoring
+./run_batch_refactoring.py /path/to/project --min-impact medium
 
 # Visualize architecture
 code-pattern visualize /path/to/project --pattern layered_architecture

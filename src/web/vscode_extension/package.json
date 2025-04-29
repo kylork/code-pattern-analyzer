@@ -1,0 +1,188 @@
+{
+  "name": "code-pattern-analyzer-vscode",
+  "displayName": "Code Pattern Analyzer",
+  "description": "Analyze code patterns, detect issues, and apply refactorings directly in VSCode",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Visualization",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:java",
+    "onLanguage:c",
+    "onLanguage:cpp",
+    "onLanguage:csharp",
+    "onLanguage:ruby",
+    "onLanguage:go",
+    "onLanguage:rust",
+    "onCommand:codePatternAnalyzer.analyzeCurrentFile",
+    "onCommand:codePatternAnalyzer.analyzeProject",
+    "onCommand:codePatternAnalyzer.showRefactoringSuggestions",
+    "onCommand:codePatternAnalyzer.applyAllSuggestedRefactorings",
+    "onCommand:codePatternAnalyzer.showComplexityMetrics",
+    "onCommand:codePatternAnalyzer.showControlFlowGraph",
+    "onCommand:codePatternAnalyzer.showDependencyGraph",
+    "onCommand:codePatternAnalyzer.configure"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codePatternAnalyzer.analyzeCurrentFile",
+        "title": "Analyze Current File",
+        "category": "Code Pattern Analyzer"
+      },
+      {
+        "command": "codePatternAnalyzer.analyzeProject",
+        "title": "Analyze Project",
+        "category": "Code Pattern Analyzer"
+      },
+      {
+        "command": "codePatternAnalyzer.showRefactoringSuggestions",
+        "title": "Show Refactoring Suggestions",
+        "category": "Code Pattern Analyzer"
+      },
+      {
+        "command": "codePatternAnalyzer.applyAllSuggestedRefactorings",
+        "title": "Apply All Suggested Refactorings",
+        "category": "Code Pattern Analyzer"
+      },
+      {
+        "command": "codePatternAnalyzer.showComplexityMetrics",
+        "title": "Show Complexity Metrics",
+        "category": "Code Pattern Analyzer"
+      },
+      {
+        "command": "codePatternAnalyzer.showControlFlowGraph",
+        "title": "Show Control Flow Graph",
+        "category": "Code Pattern Analyzer"
+      },
+      {
+        "command": "codePatternAnalyzer.showDependencyGraph",
+        "title": "Show Dependency Graph",
+        "category": "Code Pattern Analyzer"
+      },
+      {
+        "command": "codePatternAnalyzer.configure",
+        "title": "Configure",
+        "category": "Code Pattern Analyzer"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "editorHasSelection",
+          "command": "codePatternAnalyzer.analyzeCurrentFile",
+          "group": "z_commands"
+        },
+        {
+          "when": "editorHasSelection",
+          "command": "codePatternAnalyzer.showRefactoringSuggestions",
+          "group": "z_commands"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "codePatternAnalyzer.analyzeProject",
+          "group": "z_commands",
+          "when": "explorerResourceIsFolder"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Code Pattern Analyzer",
+      "properties": {
+        "codePatternAnalyzer.analysisOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run analysis when a file is saved"
+        },
+        "codePatternAnalyzer.backgroundAnalysis": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run analysis in the background as you type"
+        },
+        "codePatternAnalyzer.includePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["src/**/*"],
+          "description": "Glob patterns for files to include in analysis"
+        },
+        "codePatternAnalyzer.excludePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.venv/**"],
+          "description": "Glob patterns for files to exclude from analysis"
+        },
+        "codePatternAnalyzer.severityLevels": {
+          "type": "object",
+          "default": {
+            "deadCode": "warning",
+            "unusedVariables": "information",
+            "undefinedVariables": "warning",
+            "highComplexity": "warning",
+            "infiniteLoops": "error"
+          },
+          "description": "Severity levels for different issue types"
+        },
+        "codePatternAnalyzer.complexityThreshold": {
+          "type": "object",
+          "default": {
+            "warning": 10,
+            "error": 15
+          },
+          "description": "Thresholds for cyclomatic complexity warnings and errors"
+        },
+        "codePatternAnalyzer.showInlineComplexity": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show complexity metrics inline in the editor"
+        },
+        "codePatternAnalyzer.enableQuickFixes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable quick fix actions for issues"
+        },
+        "codePatternAnalyzer.pathToExecutable": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Code Pattern Analyzer executable (leave empty to use the one in PATH)"
+        },
+        "codePatternAnalyzer.autoOpenFlowGraphs": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically open flow graphs when requested"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run lint",
+    "lint": "eslint .",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "14.x",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^8.4.0",
+    "typescript": "^4.3.2",
+    "vscode-test": "^1.5.2"
+  },
+  "dependencies": {}
+}

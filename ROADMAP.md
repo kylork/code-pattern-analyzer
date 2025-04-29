@@ -61,13 +61,13 @@ This document outlines the development plan for the Code Pattern Analyzer, track
 
 ## Phase 5: Advanced Analysis (Current)
 
-- [ ] Control flow analysis
-- [ ] Data flow analysis
+- [x] Control flow analysis
+- [x] Data flow analysis
 - [x] Code complexity metrics
   - [x] Cyclomatic complexity
   - [x] Cognitive complexity
   - [x] Maintainability index
-- [ ] Dependency graph generation
+- [x] Dependency graph generation
 
 ## Phase 6: Transformation Engine
 
