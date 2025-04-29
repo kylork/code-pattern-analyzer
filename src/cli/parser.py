@@ -180,6 +180,89 @@ def setup_parser() -> argparse.ArgumentParser:
         help="Use mock implementation instead of tree-sitter"
     )
     
+    # Anti-patterns analysis command
+    anti_patterns_parser = subparsers.add_parser(
+        "anti-patterns",
+        help="Analyze architectural anti-patterns"
+    )
+    anti_patterns_parser.add_argument(
+        "path",
+        help="Path to the directory to analyze"
+    )
+    anti_patterns_parser.add_argument(
+        "--format", "-f",
+        choices=["json", "text", "html"],
+        default="text",
+        help="Output format"
+    )
+    anti_patterns_parser.add_argument(
+        "--output", "-o",
+        help="Output file (stdout if not specified)"
+    )
+    anti_patterns_parser.add_argument(
+        "--extensions", "-e",
+        nargs="+",
+        help="File extensions to analyze (e.g. .py .js)"
+    )
+    anti_patterns_parser.add_argument(
+        "--workers", "-w",
+        type=int,
+        default=4,
+        help="Number of worker threads for parallel processing"
+    )
+    anti_patterns_parser.add_argument(
+        "--mock",
+        action="store_true",
+        help="Use mock implementation instead of tree-sitter"
+    )
+    
+    # Complexity analysis command
+    complexity_parser = subparsers.add_parser(
+        "complexity",
+        help="Analyze code complexity metrics"
+    )
+    complexity_parser.add_argument(
+        "path",
+        help="Path to the file or directory to analyze"
+    )
+    complexity_parser.add_argument(
+        "--format", "-f",
+        choices=["json", "text", "html"],
+        default="text",
+        help="Output format"
+    )
+    complexity_parser.add_argument(
+        "--output", "-o",
+        help="Output file (stdout if not specified)"
+    )
+    complexity_parser.add_argument(
+        "--exclude",
+        help="Comma-separated list of directories to exclude"
+    )
+    complexity_parser.add_argument(
+        "--extensions", "-e",
+        help="Comma-separated list of file extensions to analyze (e.g. .py,.js)"
+    )
+    complexity_parser.add_argument(
+        "--metrics", "-m",
+        help="Comma-separated list of metrics to include (cyclomatic, cognitive, maintainability)"
+    )
+    complexity_parser.add_argument(
+        "--threshold", "-t",
+        type=int,
+        help="Complexity threshold to highlight (values above this are flagged)"
+    )
+    complexity_parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug logging"
+    )
+    complexity_parser.add_argument(
+        "--mock",
+        action="store_true",
+        help="Use mock implementation instead of tree-sitter"
+    )
+    
     return parser
 
 def parse_args(args: Optional[List[str]] = None) -> argparse.Namespace:

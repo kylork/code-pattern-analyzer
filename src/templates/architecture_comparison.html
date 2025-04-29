@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Comparison</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9fafc;
+        }
+        
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        
+        h1 {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        /* Container styles */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+        
+        .comparison-table th, 
+        .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e1e4e8;
+        }
+        
+        .comparison-table thead th {
+            background-color: #f6f8fa;
+            font-weight: 600;
+        }
+        
+        .comparison-table tbody tr:hover {
+            background-color: #f7faff;
+        }
+        
+        /* Architecture cards */
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .architecture-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .architecture-header {
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .architecture-content {
+            padding: 20px;
+        }
+        
+        .architecture-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* Architecture specific colors */
+        .layered-header {
+            background-color: #3498db;
+        }
+        
+        .hexagonal-header {
+            background-color: #2ecc71;
+        }
+        
+        .clean-header {
+            background-color: #9b59b6;
+        }
+        
+        .microservices-header {
+            background-color: #e74c3c;
+        }
+        
+        .event-driven-header {
+            background-color: #f39c12;
+        }
+        
+        /* Visualization section */
+        .visualization-container {
+            width: 100%;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .visualization {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: -1px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+        
+        .tab:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+        }
+        
+        .tab-content {
+            display: none;
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: white;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Code section */
+        pre {
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            padding: 15px;
+            overflow: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        /* Feature comparison */
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li:before {
+            content: '✓';
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .architecture-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-table th, 
+            .comparison-table td {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Architectural Patterns Comparison</h1>
+        
+        <p>This comparison presents an overview of different architectural patterns, their key characteristics, benefits, and use cases. Understanding these patterns can help you make informed decisions about which architecture best suits your project requirements.</p>
+        
+        <div class="architecture-grid">
+            <!-- Layered Architecture -->
+            <div class="architecture-card">
+                <div class="architecture-header layered-header">Layered Architecture</div>
+                <div class="architecture-content">
+                    <h3>Key Characteristics</h3>
+                    <ul>
+                        <li>Separation of concerns across horizontal layers</li>
+                        <li>Unidirectional dependencies (downward)</li>
+                        <li>Higher layers use services of lower layers</li>
+                        <li>Traditional structure: UI, Business Logic, Data Access</li>
+                    </ul>
+                    
+                    <h3>Benefits</h3>
+                    <ul>
+                        <li>Simple, well-understood structure</li>
+                        <li>Good separation of concerns</li>
+                        <li>Easy to learn and implement</li>
+                        <li>Supports parallel development</li>
+                    </ul>
+                </div>
+                <div class="architecture-footer">
+                    <strong>Best for:</strong> Traditional business applications, systems with clear hierarchical components
+                </div>
+            </div>
+            
+            <!-- Hexagonal Architecture -->
+            <div class="architecture-card">
+                <div class="architecture-header hexagonal-header">Hexagonal Architecture</div>
+                <div class="architecture-content">
+                    <h3>Key Characteristics</h3>
+                    <ul>
+                        <li>Core domain isolated from external concerns</li>
+                        <li>Ports (interfaces) define boundaries</li>
+                        <li>Adapters implement interactions with external systems</li>
+                        <li>Dependencies point inward to the domain</li>
+                    </ul>
+                    
+                    <h3>Benefits</h3>
+                    <ul>
+                        <li>Domain logic independence from technologies</li>
+                        <li>Easy to replace external components</li>
+                        <li>High testability with mock adapters</li>
+                        <li>Better flexibility for changing requirements</li>
+                    </ul>
+                </div>
+                <div class="architecture-footer">
+                    <strong>Best for:</strong> Complex business domains, systems requiring flexible integration points
+                </div>
+            </div>
+            
+            <!-- Clean Architecture -->
+            <div class="architecture-card">
+                <div class="architecture-header clean-header">Clean Architecture</div>
+                <div class="architecture-content">
+                    <h3>Key Characteristics</h3>
+                    <ul>
+                        <li>Concentric layers: Entities, Use Cases, Interfaces, Frameworks</li>
+                        <li>Dependencies point inward to higher-level policies</li>
+                        <li>Inner layers define interfaces for outer layers</li>
+                        <li>Separation of enterprise and application business rules</li>
+                    </ul>
+                    
+                    <h3>Benefits</h3>
+                    <ul>
+                        <li>Independent of frameworks and UI</li>
+                        <li>Highly testable architecture</li>
+                        <li>Independent of database implementation</li>
+                        <li>Clear separation of concerns</li>
+                    </ul>
+                </div>
+                <div class="architecture-footer">
+                    <strong>Best for:</strong> Long-lived applications with complex business rules
+                </div>
+            </div>
+        </div>
+        
+        <h2>Structure Comparison</h2>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="layered">Layered</div>
+            <div class="tab" data-tab="hexagonal">Hexagonal</div>
+            <div class="tab" data-tab="clean">Clean</div>
+        </div>
+        
+        <div class="tab-content active" id="layered-tab">
+            <h3>Layered Architecture Structure</h3>
+            <pre><code>project/
+├── ui/                      # Presentation Layer
+│   ├── controllers/         # Handle user input
+│   └── views/               # Render data for presentation
+├── services/                # Business Logic Layer
+│   ├── UserService.py
+│   └── ProductService.py
+├── repositories/            # Data Access Layer
+│   ├── UserRepository.py
+│   └── ProductRepository.py
+└── models/                  # Domain Models
+    ├── User.py
+    └── Product.py</code></pre>
+            
+            <h3>Dependency Flow</h3>
+            <p>In layered architecture, dependencies flow downward: UI → Business Logic → Data Access. Higher layers use the services provided by lower layers, but lower layers have no knowledge of higher layers.</p>
+        </div>
+        
+        <div class="tab-content" id="hexagonal-tab">
+            <h3>Hexagonal Architecture Structure</h3>
+            <pre><code>project/
+├── domain/                            # Domain Core
+│   ├── models/                        # Domain entities
+│   │   ├── User.py
+│   │   └── Product.py
+│   ├── services/                      # Domain services
+│   │   ├── UserService.py
+│   │   └── ProductService.py
+│   └── ports/                         # Port interfaces
+│       ├── UserRepositoryPort.py      # Driven ports
+│       ├── ProductRepositoryPort.py
+│       ├── UserServicePort.py         # Driving ports
+│       └── ProductServicePort.py
+└── adapters/                          # Adapters
+    ├── repositories/                  # Driven adapters
+    │   ├── UserRepositoryImpl.py
+    │   └── ProductRepositoryImpl.py
+    └── controllers/                   # Driving adapters
+        ├── UserController.py
+        └── ProductController.py</code></pre>
+            
+            <h3>Dependency Flow</h3>
+            <p>In hexagonal architecture, dependencies flow inward toward the domain core. The domain defines ports (interfaces) that adapters must implement. This creates a clear separation between business logic and technical concerns.</p>
+        </div>
+        
+        <div class="tab-content" id="clean-tab">
+            <h3>Clean Architecture Structure</h3>
+            <pre><code>project/
+├── entities/                                     # Entities Layer
+│   ├── User.py
+│   └── Product.py
+├── use_cases/                                    # Use Cases Layer
+│   ├── user_use_cases.py
+│   └── product_use_cases.py
+├── interface_adapters/                           # Interface Adapters Layer
+│   ├── controllers/
+│   │   ├── user_controller.py
+│   │   └── product_controller.py
+│   └── repositories/
+│       ├── user_repository_interface.py
+│       └── product_repository_interface.py
+└── frameworks/                                   # Frameworks & Drivers Layer
+    ├── db/
+    │   └── memory/
+    │       ├── memory_user_repository.py
+    │       └── memory_product_repository.py
+    └── web/
+        └── api_app.py</code></pre>
+            
+            <h3>Dependency Flow</h3>
+            <p>In clean architecture, dependencies point inward toward higher-level policies. The entities layer contains enterprise-wide business rules, the use cases layer contains application-specific business rules, and the outer layers interact with external systems.</p>
+        </div>
+        
+        <h2>Feature Comparison</h2>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Layered</th>
+                    <th>Hexagonal</th>
+                    <th>Clean</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Separation of concerns</td>
+                    <td>Good</td>
+                    <td>Excellent</td>
+                    <td>Excellent</td>
+                </tr>
+                <tr>
+                    <td>Isolation of business logic</td>
+                    <td>Moderate</td>
+                    <td>High</td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <td>Testability</td>
+                    <td>Good</td>
+                    <td>Excellent</td>
+                    <td>Excellent</td>
+                </tr>
+                <tr>
+                    <td>UI independence</td>
+                    <td>Limited</td>
+                    <td>High</td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <td>Framework independence</td>
+                    <td>Limited</td>
+                    <td>High</td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <td>Database independence</td>
+                    <td>Limited</td>
+                    <td>High</td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <td>Implementation complexity</td>
+                    <td>Low</td>
+                    <td>Medium</td>
+                    <td>Medium-High</td>
+                </tr>
+                <tr>
+                    <td>Learning curve</td>
+                    <td>Shallow</td>
+                    <td>Moderate</td>
+                    <td>Steep</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>Visualizations</h2>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="layered-viz">Layered</div>
+            <div class="tab" data-tab="hexagonal-viz">Hexagonal</div>
+            <div class="tab" data-tab="clean-viz">Clean</div>
+        </div>
+        
+        <div class="tab-content active" id="layered-viz-tab">
+            <div class="visualization-container">
+                <h3>Layered Architecture Visualization</h3>
+                <p>The visualization below shows the classic layered architecture with UI, business logic, and data access layers. Note the clear horizontal separation and downward dependency flow.</p>
+                <div class="visualization" id="layered-visualization">
+                    <!-- Visualization will be loaded here -->
+                    <img src="../static/images/layered_architecture_visualization.png" alt="Layered Architecture Visualization" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="hexagonal-viz-tab">
+            <div class="visualization-container">
+                <h3>Hexagonal Architecture Visualization</h3>
+                <p>The visualization below shows the hexagonal (ports and adapters) architecture with a central domain core and adapters on the periphery. Note how all dependencies point inward toward the domain.</p>
+                <div class="visualization" id="hexagonal-visualization">
+                    <!-- Visualization will be loaded here -->
+                    <img src="../static/images/hexagonal_architecture_visualization.png" alt="Hexagonal Architecture Visualization" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="clean-viz-tab">
+            <div class="visualization-container">
+                <h3>Clean Architecture Visualization</h3>
+                <p>The visualization below shows the clean architecture with concentric layers: entities at the center, followed by use cases, interface adapters, and frameworks. Note how dependencies point inward toward the core.</p>
+                <div class="visualization" id="clean-visualization">
+                    <!-- Visualization will be loaded here -->
+                    <img src="../static/images/clean_architecture_visualization.png" alt="Clean Architecture Visualization" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+        
+        <h2>When to Choose Each Architecture</h2>
+        
+        <h3>Choose Layered Architecture When:</h3>
+        <ul>
+            <li>The application has a clear hierarchical structure</li>
+            <li>The team is new to architectural patterns</li>
+            <li>Rapid development is a priority</li>
+            <li>The business domain is relatively simple</li>
+            <li>The application will have limited evolution over time</li>
+        </ul>
+        
+        <h3>Choose Hexagonal Architecture When:</h3>
+        <ul>
+            <li>The business domain is complex and needs protection</li>
+            <li>Multiple interfaces (UI, API, CLI) are needed</li>
+            <li>Integration with external systems is a key concern</li>
+            <li>Testing in isolation is important</li>
+            <li>You need flexibility to change technical implementations</li>
+        </ul>
+        
+        <h3>Choose Clean Architecture When:</h3>
+        <ul>
+            <li>The application will evolve significantly over time</li>
+            <li>You have complex business rules and use cases</li>
+            <li>You want maximum independence from frameworks and tools</li>
+            <li>You want to delay technical decisions while focusing on the domain</li>
+            <li>You need clear separation between application and enterprise rules</li>
+        </ul>
+    </div>
+    
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all tabs
+            const tabs = document.querySelectorAll('.tab');
+            
+            // Add click event to each tab
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Get the tab data attribute
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Get all tabs of the same group (structural or visualization)
+                    const isVizTab = tabId.includes('viz');
+                    const tabGroup = isVizTab ? document.querySelectorAll('.tab[data-tab*="viz"]') : document.querySelectorAll('.tab:not([data-tab*="viz"])');
+                    
+                    // Remove active class from all tabs in the group
+                    tabGroup.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Get all tab content elements
+                    const contentId = `${tabId}-tab`;
+                    const contents = document.querySelectorAll(isVizTab ? '.tab-content[id*="viz"]' : '.tab-content:not([id*="viz"])');
+                    
+                    // Hide all tab contents
+                    contents.forEach(c => c.classList.remove('active'));
+                    
+                    // Show the selected tab content
+                    document.getElementById(contentId).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

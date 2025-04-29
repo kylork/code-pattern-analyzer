@@ -10,7 +10,7 @@ import logging
 from typing import List, Optional
 
 from .parser import parse_args
-from .subcommands import pattern_command, list_command, architecture_command, visualize_command
+from .subcommands import pattern_command, list_command, architecture_command, visualize_command, anti_patterns_command, complexity_command
 
 # Configure logging
 logging.basicConfig(
@@ -48,6 +48,10 @@ def main(args: Optional[List[str]] = None) -> int:
         return architecture_command(parsed_args)
     elif parsed_args.command == "visualize":
         return visualize_command(parsed_args)
+    elif parsed_args.command == "anti-patterns":
+        return anti_patterns_command(parsed_args)
+    elif parsed_args.command == "complexity":
+        return complexity_command(parsed_args)
     else:
         logger.error("No command specified")
         return 1

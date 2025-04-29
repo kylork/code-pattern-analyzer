@@ -14,6 +14,7 @@ from typing import Dict, List, Optional, Any
 
 import webbrowser
 from ..analyzer import CodeAnalyzer
+from ..commands.complexity import complexity_command
 
 logger = logging.getLogger(__name__)
 
@@ -315,6 +316,82 @@ def architecture_command(args) -> int:
             with open(args.output, 'w') as f:
                 f.write(output)
             logger.info(f"Report written to {args.output}")
+        else:
+            print(output)
+            
+        return 0
+        
+    except Exception as e:
+        logger.error(f"Error: {str(e)}")
+        return 1
+
+
+def anti_patterns_command(args) -> int:
+    """Analyze architectural anti-patterns.
+    
+    Args:
+        args: Parsed command line arguments
+        
+    Returns:
+        Exit code
+    """
+    logger.info(f"Analyzing architectural anti-patterns in {args.path}")
+    
+    try:
+        # Initialize the analyzer
+        analyzer = CodeAnalyzer(args.mock)
+        
+        # Analyze the path
+        if os.path.isfile(args.path):
+            logger.error("Anti-pattern analysis requires a directory, not a file")
+            return 1
+            
+        # Analyze files first
+        file_results = analyzer.analyze_directory(
+            args.path, 
+            None,  # pattern
+            None,  # category
+            None,  # exclude_dirs
+            args.extensions,
+            args.workers
+        )
+        
+        # First, detect architectural styles (needed for anti-pattern detection)
+        from ..patterns.architectural_styles import ArchitecturalStyleDetector
+        style_detector = ArchitecturalStyleDetector()
+        architectural_styles = style_detector.analyze_codebase(
+            file_results,
+            {},  # No architectural intents needed for this analysis
+            args.path
+        )
+        
+        # Now detect anti-patterns using the architectural style information
+        from ..patterns.architectural_anti_patterns import ArchitecturalAntiPatternDetector
+        anti_pattern_detector = ArchitecturalAntiPatternDetector()
+        anti_pattern_analysis = anti_pattern_detector.analyze_codebase(
+            file_results,
+            architectural_styles,
+            args.path
+        )
+        
+        # Generate output
+        if args.format == 'json':
+            output = json.dumps(anti_pattern_analysis, indent=2)
+        elif args.format == 'text':
+            from ..commands.anti_patterns import generate_text_report
+            output = generate_text_report(anti_pattern_analysis, args.path)
+        elif args.format == 'html':
+            from ..commands.anti_patterns import generate_html_report
+            output = generate_html_report(anti_pattern_analysis, args.path)
+        else:
+            # Simple text summary
+            output = anti_pattern_analysis.get('summary', 'No anti-patterns detected')
+        
+        # Write to output file or print to console
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(output)
+            logger.info(f"Anti-pattern analysis written to {args.output}")
         else:
             print(output)
             

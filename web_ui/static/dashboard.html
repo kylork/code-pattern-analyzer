@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Pattern Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+        }
+        .sidebar {
+            flex: 0 0 300px;
+            background: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .content {
+            flex: 1;
+            background: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button, input {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+        .info {
+            background-color: #d9edf7;
+            color: #31708f;
+            border: 1px solid #bce8f1;
+        }
+        .refresh-btn {
+            background-color: #5bc0de;
+            margin-top: 20px;
+        }
+        .visualize-btn {
+            background-color: #f0ad4e;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        select {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+    
+        .action-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #5bc0de;
+        }
+        
+        .action-btn {
+            background-color: #5bc0de;
+            margin-bottom: 10px;
+        }
+        
+        .recent-section {
+            margin-top: 20px;
+        }</style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Code Pattern Analyzer</div>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <h2>Run Analysis</h2>
+            <form id="analyzeForm">
+                <div>
+                    <label for="directoryInput">Project Directory:</label>
+                    <input type="text" id="directoryInput" placeholder="/path/to/project" required>
+                </div>
+                <div>
+                    <label for="styleSelect">Architectural Style:</label>
+                    <select id="styleSelect">
+                        <option value="layered">Layered Architecture</option>
+                        <option value="hexagonal">Hexagonal Architecture</option>
+                        <option value="clean">Clean Architecture</option>
+                        <option value="event_driven">Event-driven Architecture</option>
+                        <option value="microservices">Microservices Architecture</option>
+                    </select>
+                </div>
+                <button type="submit">Analyze Project</button>
+            </form>
+            
+            <div id="status" class="status"></div>
+            
+            <button id="refreshBtn" class="refresh-btn">Refresh Visualizations</button>
+        </div>
+        
+        <div class="content">
+            <h2>Available Visualizations</h2>
+            <div id="visualizationsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Current job id for tracking analysis status
+        let currentJobId = null;
+        let statusCheckInterval = null;
+        
+        // DOM elements
+        const analyzeForm = document.getElementById('analyzeForm');
+        const statusDiv = document.getElementById('status');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const visualizationsList = document.getElementById('visualizationsList');
+        
+        // Event listeners
+        analyzeForm.addEventListener('submit', handleAnalyzeSubmit);
+        refreshBtn.addEventListener('click', fetchVisualizations);
+        
+        // Initial load
+        fetchVisualizations();
+        
+        // Handle form submission for analysis
+        async function handleAnalyzeSubmit(event) {
+            event.preventDefault();
+            
+            const directory = document.getElementById('directoryInput').value;
+            const style = document.getElementById('styleSelect').value;
+            
+            if (!directory) {
+                showStatus('Please enter a project directory', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('Starting analysis...', 'info');
+                
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ directory, style })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'started') {
+                    currentJobId = data.job_id;
+                    showStatus(`Analysis started: ${data.message}`, 'info');
+                    
+                    // Start checking status
+                    if (statusCheckInterval) {
+                        clearInterval(statusCheckInterval);
+                    }
+                    statusCheckInterval = setInterval(checkAnalysisStatus, 2000);
+                } else {
+                    showStatus(`Failed to start analysis: ${data.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+                console.error('Error starting analysis:', error);
+            }
+        }
+        
+        // Check the status of a running analysis
+        async function checkAnalysisStatus() {
+            if (!currentJobId) return;
+            
+            try {
+                const response = await fetch('/api/status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ job_id: currentJobId })
+                });
+                
+                const data = await response.json();
+                
+                // Update status display
+                if (data.status === 'completed') {
+                    showStatus(`Analysis completed successfully!`, 'success');
+                    clearInterval(statusCheckInterval);
+                    currentJobId = null;
+                    
+                    // Refresh visualizations list
+                    fetchVisualizations();
+                } else if (data.status === 'failed') {
+                    showStatus(`Analysis failed: ${data.message || 'Unknown error'}`, 'error');
+                    clearInterval(statusCheckInterval);
+                    currentJobId = null;
+                } else if (data.status === 'running') {
+                    showStatus(`Analysis in progress...`, 'info');
+                }
+            } catch (error) {
+                showStatus(`Error checking status: ${error.message}`, 'error');
+                console.error('Error checking analysis status:', error);
+            }
+        }
+        
+        // Fetch available visualizations
+        async function fetchVisualizations() {
+            try {
+                const response = await fetch('/api/list-visualizations', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    displayVisualizations(data.visualizations);
+                } else {
+                    console.error('Failed to fetch visualizations:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching visualizations:', error);
+            }
+        }
+        
+        // Display visualizations in the UI
+        function displayVisualizations(visualizations) {
+            visualizationsList.innerHTML = '';
+            
+            if (visualizations.length === 0) {
+                visualizationsList.innerHTML = '<p>No visualizations available. Run an analysis to generate visualizations.</p>';
+                return;
+            }
+            
+            visualizations.forEach(viz => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                // Format date
+                const date = new Date(viz.modified * 1000);
+                const formattedDate = date.toLocaleString();
+                
+                // Format file size
+                const sizeInKB = Math.round(viz.size / 1024);
+                const formattedSize = sizeInKB > 1024 
+                    ? `${(sizeInKB / 1024).toFixed(1)} MB` 
+                    : `${sizeInKB} KB`;
+                
+                card.innerHTML = `
+                    <h3>${viz.filename}</h3>
+                    <p>Size: ${formattedSize}</p>
+                    <p class="timestamp">Created: ${formattedDate}</p>
+                    <button class="visualize-btn" data-file="${viz.filename}">Open Visualization</button>
+                `;
+                
+                visualizationsList.appendChild(card);
+                
+                // Add event listener to the button
+                const button = card.querySelector('.visualize-btn');
+                button.addEventListener('click', () => openVisualization(viz.filename));
+            });
+        }
+        
+        // Open a visualization
+        async function openVisualization(filename) {
+            try {
+                const response = await fetch('/api/visualize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ file: filename })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showStatus(`Opening visualization: ${filename}`, 'success');
+                } else {
+                    showStatus(`Failed to open visualization: ${data.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+                console.error('Error opening visualization:', error);
+            }
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+        }
+    
+        // Open pattern transformation tool
+        async function openPatternTransformation() {
+            try {
+                const response = await fetch('/api/pattern-transformation', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showStatus(`Opening Pattern Transformation tool...`, 'info');
+                } else {
+                    showStatus(`Failed to open Pattern Transformation tool: ${data.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+                console.error('Error opening Pattern Transformation tool:', error);
+            }
+        }
+        
+        // Fetch transformations list
+        async function fetchTransformations() {
+            try {
+                const transformationsList = document.getElementById('transformationsList');
+                if (!transformationsList) return;
+                
+                transformationsList.innerHTML = '<p>Loading transformations...</p>';
+                
+                const response = await fetch('/api/transformations-list', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    displayTransformations(data.transformations);
+                } else {
+                    transformationsList.innerHTML = '<p>Failed to load transformations.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching transformations:', error);
+                if (document.getElementById('transformationsList')) {
+                    document.getElementById('transformationsList').innerHTML = '<p>Error loading transformations.</p>';
+                }
+            }
+        }
+        
+        // Display transformations
+        function displayTransformations(transformations) {
+            const transformationsList = document.getElementById('transformationsList');
+            if (!transformationsList) return;
+            
+            transformationsList.innerHTML = '';
+            
+            if (transformations.length === 0) {
+                transformationsList.innerHTML = '<p>No transformations have been applied yet.</p>';
+                return;
+            }
+            
+            transformations.forEach(transformation => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                // Format date
+                const date = new Date(transformation.timestamp * 1000);
+                const formattedDate = date.toLocaleString();
+                
+                card.innerHTML = `
+                    <h3>${transformation.pattern} Pattern</h3>
+                    <p><strong>Source:</strong> ${transformation.target}</p>
+                    <p><strong>Applied on:</strong> ${formattedDate}</p>
+                    <button class="visualize-btn" data-file="${transformation.output_path}">View Transformed File</button>
+                `;
+                
+                transformationsList.appendChild(card);
+                
+                // Add click handler for the view button
+                const viewButton = card.querySelector('button');
+                viewButton.addEventListener('click', () => {
+                    openVisualization(transformation.output_path);
+                });
+            });
+        }
+        
+        // Add event listener for tab changes
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.getAttribute('data-tab') === 'transformation') {
+                    fetchTransformations();
+                }
+            });
+        });</script>
+</body>
+</html>

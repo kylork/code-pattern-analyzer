@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Evolution Simulator</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9fafc;
+        }
+        
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        
+        h1 {
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        /* Container styles */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Evolution controls */
+        .evolution-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .control-group h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .slider-container {
+            margin: 15px 0;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .slider {
+            width: 100%;
+        }
+        
+        .checkbox-group {
+            margin: 10px 0;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-label input {
+            margin-right: 8px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button.primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        button.secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        button.warning {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        /* Evolution stages */
+        .evolution-timeline {
+            display: flex;
+            margin: 30px 0;
+            overflow-x: auto;
+            padding-bottom: 15px;
+        }
+        
+        .timeline-stage {
+            flex: 0 0 200px;
+            margin-right: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background-color: white;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .timeline-stage:hover {
+            transform: translateY(-5px);
+        }
+        
+        .timeline-stage.active {
+            border: 2px solid #3498db;
+        }
+        
+        .stage-header {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .stage-image {
+            width: 100%;
+            height: 120px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+        }
+        
+        .stage-details {
+            padding: 10px;
+        }
+        
+        .stage-metrics {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        /* Visualization area */
+        .visualization-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            margin: 30px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+        
+        .visualization-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .visualization-title {
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .visualization-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .visualization-canvas {
+            width: 100%;
+            height: calc(100% - 50px);
+            overflow: hidden;
+        }
+        
+        /* Split view */
+        .split-view {
+            display: flex;
+            height: 100%;
+        }
+        
+        .split-panel {
+            flex: 1;
+            padding: 15px;
+            overflow: auto;
+        }
+        
+        .left-panel {
+            border-right: 1px solid #eee;
+        }
+        
+        /* Evolution stages */
+        .evolution-detail {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .detail-header {
+            padding: 15px;
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .detail-header h2 {
+            margin: 0;
+            color: white;
+        }
+        
+        .detail-content {
+            padding: 20px;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        
+        .detail-section h3 {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .metric-card {
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+        }
+        
+        .metric-title {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        
+        .trend-up {
+            color: #27ae60;
+        }
+        
+        .trend-down {
+            color: #e74c3c;
+        }
+        
+        .trend-neutral {
+            color: #95a5a6;
+        }
+        
+        /* Changes list */
+        .changes-list {
+            margin-top: 15px;
+        }
+        
+        .change-item {
+            display: flex;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .change-item:last-child {
+            border-bottom: none;
+        }
+        
+        .change-type {
+            flex: 0 0 100px;
+            font-weight: bold;
+        }
+        
+        .change-description {
+            flex: 1;
+        }
+        
+        .change-impact {
+            flex: 0 0 100px;
+            text-align: right;
+        }
+        
+        .impact-high {
+            color: #e74c3c;
+        }
+        
+        .impact-medium {
+            color: #f39c12;
+        }
+        
+        .impact-low {
+            color: #27ae60;
+        }
+        
+        /* Code diff section */
+        .code-diff {
+            margin-top: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .diff-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #eee;
+            font-family: monospace;
+        }
+        
+        .diff-content {
+            padding: 15px;
+            overflow: auto;
+            max-height: 300px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .diff-line {
+            white-space: pre;
+            padding: 2px 0;
+        }
+        
+        .diff-added {
+            background-color: #e6ffed;
+        }
+        
+        .diff-removed {
+            background-color: #ffeef0;
+        }
+        
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .split-view {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .evolution-timeline {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 15px;
+            }
+            
+            .timeline-stage {
+                flex: 0 0 180px;
+            }
+        }
+        
+        /* Evolution simulator */
+        .simulator-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .simulator-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .simulator-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .simulator-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .simulator-visualization {
+            height: 400px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Architecture Evolution Simulator</h1>
+        
+        <p>This simulator demonstrates how software architecture evolves over time as requirements change, technical debt accumulates, and refactoring occurs. Adjust the parameters to see how different factors influence architectural evolution.</p>
+        
+        <div class="evolution-controls">
+            <div class="control-group">
+                <h3>Project Parameters</h3>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Project Size</span>
+                        <span id="project-size-value">Medium</span>
+                    </div>
+                    <input type="range" id="project-size" class="slider" min="1" max="5" value="3">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Initial Architecture</span>
+                        <span id="initial-arch-value">Layered</span>
+                    </div>
+                    <select id="initial-architecture" class="slider">
+                        <option value="monolith">Monolith</option>
+                        <option value="layered" selected>Layered</option>
+                        <option value="hexagonal">Hexagonal</option>
+                        <option value="clean">Clean</option>
+                        <option value="microservices">Microservices</option>
+                    </select>
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Team Experience</span>
+                        <span id="team-exp-value">Medium</span>
+                    </div>
+                    <input type="range" id="team-experience" class="slider" min="1" max="5" value="3">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Evolution Factors</h3>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Requirement Change Rate</span>
+                        <span id="req-change-value">Medium</span>
+                    </div>
+                    <input type="range" id="req-change-rate" class="slider" min="1" max="5" value="3">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Technical Debt Tolerance</span>
+                        <span id="tech-debt-value">Medium</span>
+                    </div>
+                    <input type="range" id="tech-debt-tolerance" class="slider" min="1" max="5" value="3">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Refactoring Frequency</span>
+                        <span id="refactor-value">Medium</span>
+                    </div>
+                    <input type="range" id="refactor-frequency" class="slider" min="1" max="5" value="3">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Events</h3>
+                
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="event-scaling"> Rapid user growth
+                    </label>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="event-security"> Security incident
+                    </label>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="event-acquisition"> Company acquisition
+                    </label>
+                    
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="event-pivot"> Business pivot
+                    </label>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="simulate-btn" class="primary">Simulate Evolution</button>
+                    <button id="reset-btn" class="secondary">Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="evolution-timeline" id="timeline">
+            <!-- Timeline stages will be generated here -->
+            <div class="timeline-stage active">
+                <div class="stage-header">Initial Architecture</div>
+                <div class="stage-image">
+                    <div>Stage 0</div>
+                </div>
+                <div class="stage-details">
+                    <div class="stage-name">Layered Architecture</div>
+                    <div class="stage-metrics">
+                        <div>Complexity: Low</div>
+                        <div>Tech Debt: None</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-stage">
+                <div class="stage-header">Year 1</div>
+                <div class="stage-image">
+                    <div>Stage 1</div>
+                </div>
+                <div class="stage-details">
+                    <div class="stage-name">Growing Layered</div>
+                    <div class="stage-metrics">
+                        <div>Complexity: Medium</div>
+                        <div>Tech Debt: Low</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-stage">
+                <div class="stage-header">Year 2</div>
+                <div class="stage-image">
+                    <div>Stage 2</div>
+                </div>
+                <div class="stage-details">
+                    <div class="stage-name">Modular Transition</div>
+                    <div class="stage-metrics">
+                        <div>Complexity: Medium</div>
+                        <div>Tech Debt: Medium</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-stage">
+                <div class="stage-header">Year 3</div>
+                <div class="stage-image">
+                    <div>Stage 3</div>
+                </div>
+                <div class="stage-details">
+                    <div class="stage-name">Service Oriented</div>
+                    <div class="stage-metrics">
+                        <div>Complexity: High</div>
+                        <div>Tech Debt: Low</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="visualization-container">
+            <div class="visualization-header">
+                <h3 class="visualization-title">Initial Architecture (Year 0)</h3>
+                <div class="visualization-controls">
+                    <button class="secondary" id="prev-stage">Previous</button>
+                    <button class="primary" id="next-stage">Next</button>
+                </div>
+            </div>
+            <div class="visualization-canvas">
+                <div class="split-view">
+                    <div class="split-panel left-panel">
+                        <div id="architecture-visualization">
+                            <!-- Architecture diagram would be rendered here -->
+                            <svg width="100%" height="100%" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Layered Architecture Example -->
+                                <rect x="50" y="50" width="700" height="80" fill="#d1e7f7" stroke="#3498db" stroke-width="2" />
+                                <text x="400" y="90" text-anchor="middle" font-size="16">Presentation Layer</text>
+                                
+                                <rect x="50" y="160" width="700" height="80" fill="#d1f7e3" stroke="#2ecc71" stroke-width="2" />
+                                <text x="400" y="200" text-anchor="middle" font-size="16">Business Logic Layer</text>
+                                
+                                <rect x="50" y="270" width="700" height="80" fill="#f7e5d1" stroke="#f39c12" stroke-width="2" />
+                                <text x="400" y="310" text-anchor="middle" font-size="16">Data Access Layer</text>
+                                
+                                <!-- Dependency arrows -->
+                                <path d="M400,130 L400,160" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                                <path d="M400,240 L400,270" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                                
+                                <!-- Arrow definition -->
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="split-panel right-panel">
+                        <h3>Architecture Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-title">Components</div>
+                                <div class="metric-value">12</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Dependencies</div>
+                                <div class="metric-value">24</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Complexity</div>
+                                <div class="metric-value">Low</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Technical Debt</div>
+                                <div class="metric-value">Minimal</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Maintainability</div>
+                                <div class="metric-value">High</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Scalability</div>
+                                <div class="metric-value">Medium</div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-top: 30px;">Architecture Description</h3>
+                        <p>The initial architecture follows a classic three-tier layered approach with clear separation between presentation, business logic, and data access concerns. Dependencies flow downward, and each layer has a well-defined responsibility.</p>
+                        <p>This architecture provides a solid foundation for the application's early stages, with good maintainability and moderate scalability. As the application grows, we may need to consider more modular approaches to manage complexity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="evolution-detail">
+            <div class="detail-header">
+                <h2>Evolution Details</h2>
+            </div>
+            <div class="detail-content">
+                <div class="detail-section">
+                    <h3>Changes from Previous Stage</h3>
+                    <div class="changes-list">
+                        <div class="change-item">
+                            <div class="change-type">Added</div>
+                            <div class="change-description">User authentication service with JWT implementation</div>
+                            <div class="change-impact impact-low">Low Impact</div>
+                        </div>
+                        <div class="change-item">
+                            <div class="change-type">Modified</div>
+                            <div class="change-description">Refactored data access layer to use repository pattern</div>
+                            <div class="change-impact impact-medium">Medium Impact</div>
+                        </div>
+                        <div class="change-item">
+                            <div class="change-type">Removed</div>
+                            <div class="change-description">Legacy file-based storage system</div>
+                            <div class="change-impact impact-low">Low Impact</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h3>Architectural Decision Records</h3>
+                    <div class="changes-list">
+                        <div class="change-item">
+                            <div class="change-type">ADR-001</div>
+                            <div class="change-description">Initial selection of layered architecture pattern for simplicity and team familiarity</div>
+                            <div class="change-impact">Year 0</div>
+                        </div>
+                        <div class="change-item">
+                            <div class="change-type">ADR-002</div>
+                            <div class="change-description">Adoption of repository pattern for data access standardization</div>
+                            <div class="change-impact">Year 1</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h3>Code Changes Example</h3>
+                    <div class="code-diff">
+                        <div class="diff-header">
+                            <span>UserRepository.java</span>
+                            <span>+15 -8</span>
+                        </div>
+                        <div class="diff-content">
+                            <div class="diff-line diff-removed">- public class UserDAO {</div>
+                            <div class="diff-line diff-removed">-     private Connection dbConnection;</div>
+                            <div class="diff-line diff-removed">-     </div>
+                            <div class="diff-line diff-removed">-     public User findById(long id) {</div>
+                            <div class="diff-line diff-removed">-         // Direct SQL query implementation</div>
+                            <div class="diff-line diff-removed">-         ...</div>
+                            <div class="diff-line diff-removed">-     }</div>
+                            <div class="diff-line diff-removed">- }</div>
+                            <div class="diff-line diff-added">+ public interface UserRepository {</div>
+                            <div class="diff-line diff-added">+     User findById(long id);</div>
+                            <div class="diff-line diff-added">+     List&lt;User&gt; findAll();</div>
+                            <div class="diff-line diff-added">+     User save(User user);</div>
+                            <div class="diff-line diff-added">+     void delete(User user);</div>
+                            <div class="diff-line diff-added">+ }</div>
+                            <div class="diff-line diff-added">+ </div>
+                            <div class="diff-line diff-added">+ public class JdbcUserRepository implements UserRepository {</div>
+                            <div class="diff-line diff-added">+     private Connection dbConnection;</div>
+                            <div class="diff-line diff-added">+     </div>
+                            <div class="diff-line diff-added">+     @Override</div>
+                            <div class="diff-line diff-added">+     public User findById(long id) {</div>
+                            <div class="diff-line diff-added">+         // Implementation with better error handling</div>
+                            <div class="diff-line diff-added">+         ...</div>
+                            <div class="diff-line diff-added">+     }</div>
+                            <div class="diff-line diff-added">+     // Other implemented methods</div>
+                            <div class="diff-line diff-added">+ }</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Slider value display updates
+        document.getElementById('project-size').addEventListener('input', function() {
+            const values = ['Very Small', 'Small', 'Medium', 'Large', 'Very Large'];
+            document.getElementById('project-size-value').textContent = values[this.value - 1];
+        });
+        
+        document.getElementById('team-experience').addEventListener('input', function() {
+            const values = ['Beginner', 'Novice', 'Intermediate', 'Experienced', 'Expert'];
+            document.getElementById('team-exp-value').textContent = values[this.value - 1];
+        });
+        
+        document.getElementById('req-change-rate').addEventListener('input', function() {
+            const values = ['Very Low', 'Low', 'Medium', 'High', 'Very High'];
+            document.getElementById('req-change-value').textContent = values[this.value - 1];
+        });
+        
+        document.getElementById('tech-debt-tolerance').addEventListener('input', function() {
+            const values = ['Very Low', 'Low', 'Medium', 'High', 'Very High'];
+            document.getElementById('tech-debt-value').textContent = values[this.value - 1];
+        });
+        
+        document.getElementById('refactor-frequency').addEventListener('input', function() {
+            const values = ['Very Low', 'Low', 'Medium', 'High', 'Very High'];
+            document.getElementById('refactor-value').textContent = values[this.value - 1];
+        });
+        
+        document.getElementById('initial-architecture').addEventListener('change', function() {
+            document.getElementById('initial-arch-value').textContent = 
+                this.options[this.selectedIndex].text;
+        });
+        
+        // Timeline stage selection
+        const timelineStages = document.querySelectorAll('.timeline-stage');
+        timelineStages.forEach(stage => {
+            stage.addEventListener('click', function() {
+                // Remove active class from all stages
+                timelineStages.forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked stage
+                this.classList.add('active');
+                
+                // In a real implementation, this would update the visualization
+                const stageName = this.querySelector('.stage-name').textContent;
+                document.querySelector('.visualization-title').textContent = 
+                    `${stageName} (${this.querySelector('.stage-header').textContent})`;
+                
+                // Placeholder for updating the visualization content
+                console.log(`Selected stage: ${stageName}`);
+            });
+        });
+        
+        // Navigation buttons
+        document.getElementById('prev-stage').addEventListener('click', function() {
+            const activeStage = document.querySelector('.timeline-stage.active');
+            const prevStage = activeStage.previousElementSibling;
+            
+            if (prevStage && prevStage.classList.contains('timeline-stage')) {
+                activeStage.classList.remove('active');
+                prevStage.classList.add('active');
+                prevStage.click(); // Trigger the click event to update visualization
+            }
+        });
+        
+        document.getElementById('next-stage').addEventListener('click', function() {
+            const activeStage = document.querySelector('.timeline-stage.active');
+            const nextStage = activeStage.nextElementSibling;
+            
+            if (nextStage && nextStage.classList.contains('timeline-stage')) {
+                activeStage.classList.remove('active');
+                nextStage.classList.add('active');
+                nextStage.click(); // Trigger the click event to update visualization
+            }
+        });
+        
+        // Simulation button
+        document.getElementById('simulate-btn').addEventListener('click', function() {
+            // In a real implementation, this would run the simulation with the selected parameters
+            // For now, just show an alert
+            alert('Simulation would run with the current parameters.\n\nIn a real implementation, this would generate a custom evolution timeline based on your inputs.');
+        });
+        
+        // Reset button
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            // Reset sliders to default values
+            document.getElementById('project-size').value = 3;
+            document.getElementById('project-size-value').textContent = 'Medium';
+            
+            document.getElementById('team-experience').value = 3;
+            document.getElementById('team-exp-value').textContent = 'Medium';
+            
+            document.getElementById('req-change-rate').value = 3;
+            document.getElementById('req-change-value').textContent = 'Medium';
+            
+            document.getElementById('tech-debt-tolerance').value = 3;
+            document.getElementById('tech-debt-value').textContent = 'Medium';
+            
+            document.getElementById('refactor-frequency').value = 3;
+            document.getElementById('refactor-value').textContent = 'Medium';
+            
+            document.getElementById('initial-architecture').value = 'layered';
+            document.getElementById('initial-arch-value').textContent = 'Layered';
+            
+            // Reset checkboxes
+            document.getElementById('event-scaling').checked = false;
+            document.getElementById('event-security').checked = false;
+            document.getElementById('event-acquisition').checked = false;
+            document.getElementById('event-pivot').checked = false;
+            
+            // Reset to first stage
+            timelineStages[0].click();
+        });
+    </script>
+</body>
+</html>

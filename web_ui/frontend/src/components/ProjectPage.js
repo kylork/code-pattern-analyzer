@@ -145,6 +145,24 @@ const ProjectPage = () => {
                 <p><strong>Files:</strong> {Object.keys(project.files || {}).length}</p>
                 <p><strong>Analyses:</strong> {(project.analyses || []).length}</p>
               </div>
+              
+              {/* Dashboard Link */}
+              <div style={{ marginTop: '15px' }}>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => navigate(`/dashboard/${projectId}`)}
+                  style={{ 
+                    backgroundColor: '#1565c0', 
+                    color: 'white',
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  View Interactive Dashboard
+                </button>
+              </div>
             </div>
           </div>
 

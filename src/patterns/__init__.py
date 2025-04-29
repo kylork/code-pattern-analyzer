@@ -12,6 +12,7 @@ from .design_patterns import DesignPatternsPattern
 from .code_smells import CodeSmellsPattern
 from .architectural_intents import ArchitecturalIntentDetector
 from .architectural_styles import ArchitecturalStyleDetector
+from .architectural_anti_patterns import ArchitecturalAntiPatternDetector
 
 # Register all patterns with the pattern registry
 registry.register(AllFunctionsPattern(), ["function_patterns"])
@@ -34,6 +35,14 @@ registry.register(MicroservicesPattern(), ["architectural_styles"])
 registry.register(EventDrivenPattern(), ["architectural_styles"])
 registry.register(LayeredArchitecturePattern(), ["architectural_styles"])
 registry.register(ArchitecturalStyleDetector(), ["architectural_styles"])
+
+# Register architectural anti-pattern detectors
+from .architectural_anti_patterns import TightCouplingAntiPattern, DependencyCycleAntiPattern, ArchitecturalErosionAntiPattern, GodComponentAntiPattern
+registry.register(TightCouplingAntiPattern(), ["architectural_anti_patterns"])
+registry.register(DependencyCycleAntiPattern(), ["architectural_anti_patterns"])
+registry.register(ArchitecturalErosionAntiPattern(), ["architectural_anti_patterns"])
+registry.register(GodComponentAntiPattern(), ["architectural_anti_patterns"])
+registry.register(ArchitecturalAntiPatternDetector(), ["architectural_anti_patterns"])
 
 # Import additional pattern modules to ensure they're registered
 from .python_patterns import *

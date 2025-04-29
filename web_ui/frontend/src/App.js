@@ -8,6 +8,7 @@ import FilePage from './components/FilePage';
 import ProjectsPage from './components/ProjectsPage';
 import ProjectPage from './components/ProjectPage';
 import ResultsPage from './components/ResultsPage';
+import Dashboard from './components/Dashboard';
 import Header from './components/Header';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
               <Route path="/file" element={<FilePage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/projects/:projectId" element={<ProjectPage />} />
+              <Route path="/dashboard/:projectId" element={<Dashboard />} />
               <Route path="/results/:analysisId" element={<ResultsPage />} />
             </Routes>
           </div>

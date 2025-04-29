@@ -63,10 +63,10 @@ This document outlines the development plan for the Code Pattern Analyzer, track
 
 - [ ] Control flow analysis
 - [ ] Data flow analysis
-- [ ] Code complexity metrics
-  - [ ] Cyclomatic complexity
-  - [ ] Cognitive complexity
-  - [ ] Maintainability index
+- [x] Code complexity metrics
+  - [x] Cyclomatic complexity
+  - [x] Cognitive complexity
+  - [x] Maintainability index
 - [ ] Dependency graph generation
 
 ## Phase 6: Transformation Engine

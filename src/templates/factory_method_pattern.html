@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factory Method Pattern - Interactive Design Patterns Explorer</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafc;
+        }
+        
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        
+        h1 {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 0;
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        /* Container styles */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Pattern header */
+        .pattern-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .pattern-title h2 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        
+        .pattern-type {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        
+        .pattern-tags {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .pattern-tag {
+            padding: 5px 10px;
+            background-color: #eee;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+        
+        /* Pattern explorer */
+        .pattern-explorer {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        /* Pattern list */
+        .patterns-list {
+            flex: 0 0 250px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .pattern-category {
+            margin-bottom: 15px;
+        }
+        
+        .category-title {
+            font-weight: bold;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        
+        .category-title::after {
+            content: '▼';
+            float: right;
+            transition: transform 0.3s;
+        }
+        
+        .category-title.collapsed::after {
+            transform: rotate(-90deg);
+        }
+        
+        .pattern-items {
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        
+        .pattern-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .pattern-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .pattern-item.active {
+            background-color: #e3f2fd;
+            font-weight: bold;
+        }
+        
+        /* Pattern content */
+        .pattern-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        /* Pattern tabs */
+        .pattern-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .pattern-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: bold;
+        }
+        
+        .pattern-tab.active {
+            border-bottom-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Pattern diagram */
+        .pattern-diagram {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        /* Pattern code example */
+        .code-example {
+            margin-top: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        .code-tabs {
+            display: flex;
+            margin-bottom: -1px;
+        }
+        
+        .code-tab {
+            padding: 8px 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        
+        .code-tab.active {
+            background-color: white;
+            border-bottom-color: white;
+        }
+        
+        .code-panel {
+            display: none;
+            padding: 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 0 5px 5px 5px;
+            max-height: 400px;
+            overflow: auto;
+        }
+        
+        .code-panel.active {
+            display: block;
+        }
+        
+        /* Code highlighting */
+        .code-panel pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .code-keyword {
+            color: #07a;
+        }
+        
+        .code-string {
+            color: #690;
+        }
+        
+        .code-comment {
+            color: #999;
+        }
+        
+        .code-class {
+            color: #dd4a68;
+        }
+        
+        .code-function {
+            color: #dd4a68;
+        }
+        
+        /* Implementation details */
+        .implementation-details {
+            margin-top: 30px;
+        }
+        
+        .implementation-section {
+            margin-bottom: 20px;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .detail-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .detail-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        /* Usage examples */
+        .usage-examples {
+            margin-top: 30px;
+        }
+        
+        .example-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* Pattern relationships */
+        .pattern-relationships {
+            margin-top: 30px;
+        }
+        
+        .relationship-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .relationship-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .relationship-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .relationship-type {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .relationship-name {
+            font-weight: bold;
+        }
+        
+        /* Interactive simulation */
+        .pattern-simulation {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .simulation-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .simulation-button {
+            padding: 8px 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .simulation-button:hover {
+            background-color: #c0392b;
+        }
+        
+        .simulation-canvas {
+            width: 100%;
+            height: 300px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        /* Animation styles */
+        @keyframes highlight {
+            0% { stroke-width: 1; }
+            50% { stroke-width: 3; stroke: #e74c3c; }
+            100% { stroke-width: 1; }
+        }
+        
+        .highlight-animation {
+            animation: highlight 1.5s ease-in-out;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .pattern-explorer {
+                flex-direction: column;
+            }
+            
+            .patterns-list {
+                flex: 0 0 auto;
+                max-height: 300px;
+            }
+            
+            .details-grid, .relationship-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Design Patterns Explorer</h1>
+    
+    <div class="container">
+        <div class="pattern-header">
+            <div class="pattern-title">
+                <h2>Factory Method Pattern <span class="pattern-type">Creational</span></h2>
+            </div>
+            <div class="pattern-tags">
+                <div class="pattern-tag">Object Creation</div>
+                <div class="pattern-tag">Inheritance</div>
+                <div class="pattern-tag">Polymorphism</div>
+            </div>
+        </div>
+        
+        <div class="pattern-explorer">
+            <div class="patterns-list">
+                <div class="pattern-category">
+                    <div class="category-title">Creational Patterns</div>
+                    <div class="pattern-items">
+                        <div class="pattern-item active">Factory Method</div>
+                        <div class="pattern-item">Abstract Factory</div>
+                        <div class="pattern-item">Builder</div>
+                        <div class="pattern-item">Prototype</div>
+                        <div class="pattern-item">Singleton</div>
+                    </div>
+                </div>
+                
+                <div class="pattern-category">
+                    <div class="category-title">Structural Patterns</div>
+                    <div class="pattern-items">
+                        <div class="pattern-item">Adapter</div>
+                        <div class="pattern-item">Bridge</div>
+                        <div class="pattern-item">Composite</div>
+                        <div class="pattern-item">Decorator</div>
+                        <div class="pattern-item">Facade</div>
+                        <div class="pattern-item">Flyweight</div>
+                        <div class="pattern-item">Proxy</div>
+                    </div>
+                </div>
+                
+                <div class="pattern-category">
+                    <div class="category-title">Behavioral Patterns</div>
+                    <div class="pattern-items">
+                        <div class="pattern-item">Chain of Responsibility</div>
+                        <div class="pattern-item">Command</div>
+                        <div class="pattern-item">Interpreter</div>
+                        <div class="pattern-item">Iterator</div>
+                        <div class="pattern-item">Mediator</div>
+                        <div class="pattern-item">Memento</div>
+                        <div class="pattern-item">Observer</div>
+                        <div class="pattern-item">State</div>
+                        <div class="pattern-item">Strategy</div>
+                        <div class="pattern-item">Template Method</div>
+                        <div class="pattern-item">Visitor</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pattern-content">
+                <div class="pattern-tabs">
+                    <div class="pattern-tab active" data-tab="overview">Overview</div>
+                    <div class="pattern-tab" data-tab="implementation">Implementation</div>
+                    <div class="pattern-tab" data-tab="examples">Examples</div>
+                    <div class="pattern-tab" data-tab="simulate">Simulate</div>
+                </div>
+                
+                <div id="overview-tab" class="tab-content active">
+                    <h3>Factory Method Pattern</h3>
+                    <p>The Factory Method pattern is a creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created. It defines a method for creating objects, but lets subclasses decide which class to instantiate.</p>
+                    
+                    <div class="pattern-diagram">
+                        <svg width="100%" height="100%" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Creator abstract class -->
+                            <rect x="100" y="100" width="200" height="100" fill="#f8d7da" stroke="#e74c3c" stroke-width="2" rx="5" ry="5" id="creator-box" />
+                            <text x="200" y="140" text-anchor="middle" font-size="16" font-weight="bold">Creator</text>
+                            <text x="200" y="170" text-anchor="middle" font-size="14">+ factoryMethod()</text>
+                            <text x="200" y="190" text-anchor="middle" font-size="14">+ anOperation()</text>
+                            
+                            <!-- ConcreteCreator -->
+                            <rect x="100" y="250" width="200" height="100" fill="#f8d7da" stroke="#e74c3c" stroke-width="2" rx="5" ry="5" id="concrete-creator-box" />
+                            <text x="200" y="290" text-anchor="middle" font-size="16" font-weight="bold">ConcreteCreator</text>
+                            <text x="200" y="320" text-anchor="middle" font-size="14">+ factoryMethod()</text>
+                            
+                            <!-- Product interface -->
+                            <rect x="500" y="100" width="200" height="100" fill="#e8f4e5" stroke="#2ecc71" stroke-width="2" rx="5" ry="5" id="product-box" />
+                            <text x="600" y="140" text-anchor="middle" font-size="16" font-weight="bold">Product</text>
+                            <text x="600" y="170" text-anchor="middle" font-size="14">+ operation()</text>
+                            
+                            <!-- ConcreteProduct -->
+                            <rect x="500" y="250" width="200" height="100" fill="#e8f4e5" stroke="#2ecc71" stroke-width="2" rx="5" ry="5" id="concrete-product-box" />
+                            <text x="600" y="290" text-anchor="middle" font-size="16" font-weight="bold">ConcreteProduct</text>
+                            <text x="600" y="320" text-anchor="middle" font-size="14">+ operation()</text>
+                            
+                            <!-- Inheritance lines -->
+                            <line x1="200" y1="200" x2="200" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                            <line x1="600" y1="200" x2="600" y2="250" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                            
+                            <!-- Association line -->
+                            <line x1="300" y1="150" x2="500" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                            <text x="400" y="140" text-anchor="middle" font-size="14">creates</text>
+                            
+                            <!-- Factory Method relationship -->
+                            <path d="M300,300 Q400,300 500,300" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                            <text x="400" y="290" text-anchor="middle" font-size="14">creates</text>
+                            
+                            <!-- Arrow definition -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    
+                    <h3>Pattern Components</h3>
+                    <ul>
+                        <li><strong>Product</strong> - Defines the interface of objects the factory method creates.</li>
+                        <li><strong>ConcreteProduct</strong> - Implements the Product interface.</li>
+                        <li><strong>Creator</strong> - Declares the factory method, which returns an object of type Product. Creator may also define a default implementation of the factory method that returns a default ConcreteProduct object.</li>
+                        <li><strong>ConcreteCreator</strong> - Overrides the factory method to return an instance of a ConcreteProduct.</li>
+                    </ul>
+                    
+                    <h3>Key Benefits</h3>
+                    <ul>
+                        <li><strong>Loose Coupling</strong> - The code that uses the factory method doesn't need to know which concrete classes it works with.</li>
+                        <li><strong>Single Responsibility Principle</strong> - You can move the product creation code into one place in the program, making the code easier to support.</li>
+                        <li><strong>Open/Closed Principle</strong> - You can introduce new types of products into the program without breaking existing client code.</li>
+                        <li><strong>Extensibility</strong> - Makes the framework more customizable and allows for future expansion.</li>
+                    </ul>
+                    
+                    <h3>Common Applications</h3>
+                    <ul>
+                        <li>Creating UI elements that need to differ based on the operating system</li>
+                        <li>Framework-level object creation where clients need to extend capabilities</li>
+                        <li>Resource management systems (file, network, database connectors)</li>
+                        <li>Plugin architectures</li>
+                        <li>Parameterized object creation based on configuration or environment</li>
+                    </ul>
+                </div>
+                
+                <div id="implementation-tab" class="tab-content">
+                    <h3>Implementation Details</h3>
+                    
+                    <div class="implementation-section">
+                        <h4>Core Components</h4>
+                        <div class="details-grid">
+                            <div class="detail-card">
+                                <div class="detail-title">Creator Interface/Abstract Class</div>
+                                <div class="detail-content">
+                                    Defines the factory method that returns objects of the Product type. Often includes:
+                                    <ul>
+                                        <li>factoryMethod() - abstract or with default implementation</li>
+                                        <li>Template methods that use the factoryMethod()</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-card">
+                                <div class="detail-title">ConcreteCreator Implementation</div>
+                                <div class="detail-content">
+                                    Overrides the factory method to create specific product objects:
+                                    <ul>
+                                        <li>factoryMethod() - returns a specific ConcreteProduct</li>
+                                        <li>May contain additional business logic</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-card">
+                                <div class="detail-title">Product Interface</div>
+                                <div class="detail-content">
+                                    Defines the interface that all products must implement:
+                                    <ul>
+                                        <li>Common operations that concrete products will implement</li>
+                                        <li>Ensures all products can be used interchangeably</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-card">
+                                <div class="detail-title">ConcreteProduct Implementation</div>
+                                <div class="detail-content">
+                                    Implements the Product interface:
+                                    <ul>
+                                        <li>Specific implementation of the required operations</li>
+                                        <li>Product-specific behaviors and attributes</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="code-example">
+                        <div class="code-tabs">
+                            <div class="code-tab active" data-lang="python">Python</div>
+                            <div class="code-tab" data-lang="java">Java</div>
+                            <div class="code-tab" data-lang="typescript">TypeScript</div>
+                        </div>
+                        
+                        <div class="code-panel active" id="python-code">
+                            <pre>
+<span class="code-keyword">from</span> abc <span class="code-keyword">import</span> ABC, abstractmethod
+
+<span class="code-comment"># Product interface</span>
+<span class="code-keyword">class</span> <span class="code-class">Document</span>(ABC):
+    <span class="code-function">@abstractmethod</span>
+    <span class="code-keyword">def</span> <span class="code-function">open</span>(self):
+        <span class="code-keyword">pass</span>
+    
+    <span class="code-function">@abstractmethod</span>
+    <span class="code-keyword">def</span> <span class="code-function">save</span>(self):
+        <span class="code-keyword">pass</span>
+
+<span class="code-comment"># Concrete products</span>
+<span class="code-keyword">class</span> <span class="code-class">PDFDocument</span>(Document):
+    <span class="code-keyword">def</span> <span class="code-function">open</span>(self):
+        <span class="code-keyword">return</span> <span class="code-string">"Opening PDF document"</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">save</span>(self):
+        <span class="code-keyword">return</span> <span class="code-string">"Saving PDF document"</span>
+
+<span class="code-keyword">class</span> <span class="code-class">WordDocument</span>(Document):
+    <span class="code-keyword">def</span> <span class="code-function">open</span>(self):
+        <span class="code-keyword">return</span> <span class="code-string">"Opening Word document"</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">save</span>(self):
+        <span class="code-keyword">return</span> <span class="code-string">"Saving Word document"</span>
+
+<span class="code-keyword">class</span> <span class="code-class">TextDocument</span>(Document):
+    <span class="code-keyword">def</span> <span class="code-function">open</span>(self):
+        <span class="code-keyword">return</span> <span class="code-string">"Opening text document"</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">save</span>(self):
+        <span class="code-keyword">return</span> <span class="code-string">"Saving text document"</span>
+
+<span class="code-comment"># Creator (Factory) class</span>
+<span class="code-keyword">class</span> <span class="code-class">DocumentFactory</span>:
+    <span class="code-function">@staticmethod</span>
+    <span class="code-keyword">def</span> <span class="code-function">create_document</span>(doc_type):
+        <span class="code-string">"""
+        Factory method to create documents based on type.
+        """</span>
+        <span class="code-keyword">if</span> doc_type == <span class="code-string">"pdf"</span>:
+            <span class="code-keyword">return</span> PDFDocument()
+        <span class="code-keyword">elif</span> doc_type == <span class="code-string">"word"</span>:
+            <span class="code-keyword">return</span> WordDocument()
+        <span class="code-keyword">elif</span> doc_type == <span class="code-string">"text"</span>:
+            <span class="code-keyword">return</span> TextDocument()
+        <span class="code-keyword">else</span>:
+            <span class="code-keyword">raise</span> ValueError(<span class="code-string">f"Unknown document type: {doc_type}"</span>)
+
+<span class="code-comment"># Usage example</span>
+<span class="code-keyword">if</span> __name__ == <span class="code-string">"__main__"</span>:
+    <span class="code-comment"># Create documents using the factory</span>
+    pdf = DocumentFactory.create_document(<span class="code-string">"pdf"</span>)
+    word = DocumentFactory.create_document(<span class="code-string">"word"</span>)
+    text = DocumentFactory.create_document(<span class="code-string">"text"</span>)
+    
+    <span class="code-comment"># Use the documents</span>
+    <span class="code-keyword">print</span>(pdf.open())
+    <span class="code-keyword">print</span>(word.save())
+    <span class="code-keyword">print</span>(text.open())
+</pre>
+                        </div>
+                        
+                        <div class="code-panel" id="java-code">
+                            <pre>
+<span class="code-comment">// Product interface</span>
+<span class="code-keyword">interface</span> <span class="code-class">Document</span> {
+    <span class="code-keyword">String</span> <span class="code-function">open</span>();
+    <span class="code-keyword">String</span> <span class="code-function">save</span>();
+}
+
+<span class="code-comment">// Concrete products</span>
+<span class="code-keyword">class</span> <span class="code-class">PDFDocument</span> <span class="code-keyword">implements</span> Document {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public String</span> <span class="code-function">open</span>() {
+        <span class="code-keyword">return</span> <span class="code-string">"Opening PDF document"</span>;
+    }
+    
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public String</span> <span class="code-function">save</span>() {
+        <span class="code-keyword">return</span> <span class="code-string">"Saving PDF document"</span>;
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">WordDocument</span> <span class="code-keyword">implements</span> Document {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public String</span> <span class="code-function">open</span>() {
+        <span class="code-keyword">return</span> <span class="code-string">"Opening Word document"</span>;
+    }
+    
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public String</span> <span class="code-function">save</span>() {
+        <span class="code-keyword">return</span> <span class="code-string">"Saving Word document"</span>;
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">TextDocument</span> <span class="code-keyword">implements</span> Document {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public String</span> <span class="code-function">open</span>() {
+        <span class="code-keyword">return</span> <span class="code-string">"Opening text document"</span>;
+    }
+    
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public String</span> <span class="code-function">save</span>() {
+        <span class="code-keyword">return</span> <span class="code-string">"Saving text document"</span>;
+    }
+}
+
+<span class="code-comment">// Creator abstract class</span>
+<span class="code-keyword">abstract class</span> <span class="code-class">DocumentCreator</span> {
+    <span class="code-comment">// Factory method</span>
+    <span class="code-keyword">public abstract</span> Document <span class="code-function">createDocument</span>();
+    
+    <span class="code-comment">// Template method that uses the factory method</span>
+    <span class="code-keyword">public void</span> <span class="code-function">openDocument</span>() {
+        Document document = createDocument();
+        System.out.println(document.open());
+    }
+}
+
+<span class="code-comment">// Concrete creators</span>
+<span class="code-keyword">class</span> <span class="code-class">PDFDocumentCreator</span> <span class="code-keyword">extends</span> DocumentCreator {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Document <span class="code-function">createDocument</span>() {
+        <span class="code-keyword">return new</span> PDFDocument();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">WordDocumentCreator</span> <span class="code-keyword">extends</span> DocumentCreator {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Document <span class="code-function">createDocument</span>() {
+        <span class="code-keyword">return new</span> WordDocument();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">TextDocumentCreator</span> <span class="code-keyword">extends</span> DocumentCreator {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Document <span class="code-function">createDocument</span>() {
+        <span class="code-keyword">return new</span> TextDocument();
+    }
+}
+
+<span class="code-comment">// Client code</span>
+<span class="code-keyword">public class</span> <span class="code-class">FactoryMethodDemo</span> {
+    <span class="code-keyword">public static void</span> <span class="code-function">main</span>(String[] args) {
+        DocumentCreator pdfCreator = <span class="code-keyword">new</span> PDFDocumentCreator();
+        DocumentCreator wordCreator = <span class="code-keyword">new</span> WordDocumentCreator();
+        DocumentCreator textCreator = <span class="code-keyword">new</span> TextDocumentCreator();
+        
+        <span class="code-comment">// Using the factory methods</span>
+        Document pdf = pdfCreator.createDocument();
+        Document word = wordCreator.createDocument();
+        Document text = textCreator.createDocument();
+        
+        System.out.println(pdf.open());
+        System.out.println(word.save());
+        System.out.println(text.open());
+        
+        <span class="code-comment">// Using the template method</span>
+        pdfCreator.openDocument();
+        wordCreator.openDocument();
+        textCreator.openDocument();
+    }
+}
+</pre>
+                        </div>
+                        
+                        <div class="code-panel" id="typescript-code">
+                            <pre>
+<span class="code-comment">// Product interface</span>
+<span class="code-keyword">interface</span> <span class="code-class">Document</span> {
+    open(): <span class="code-keyword">string</span>;
+    save(): <span class="code-keyword">string</span>;
+}
+
+<span class="code-comment">// Concrete products</span>
+<span class="code-keyword">class</span> <span class="code-class">PDFDocument</span> <span class="code-keyword">implements</span> Document {
+    <span class="code-function">open</span>(): <span class="code-keyword">string</span> {
+        <span class="code-keyword">return</span> <span class="code-string">"Opening PDF document"</span>;
+    }
+    
+    <span class="code-function">save</span>(): <span class="code-keyword">string</span> {
+        <span class="code-keyword">return</span> <span class="code-string">"Saving PDF document"</span>;
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">WordDocument</span> <span class="code-keyword">implements</span> Document {
+    <span class="code-function">open</span>(): <span class="code-keyword">string</span> {
+        <span class="code-keyword">return</span> <span class="code-string">"Opening Word document"</span>;
+    }
+    
+    <span class="code-function">save</span>(): <span class="code-keyword">string</span> {
+        <span class="code-keyword">return</span> <span class="code-string">"Saving Word document"</span>;
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">TextDocument</span> <span class="code-keyword">implements</span> Document {
+    <span class="code-function">open</span>(): <span class="code-keyword">string</span> {
+        <span class="code-keyword">return</span> <span class="code-string">"Opening text document"</span>;
+    }
+    
+    <span class="code-function">save</span>(): <span class="code-keyword">string</span> {
+        <span class="code-keyword">return</span> <span class="code-string">"Saving text document"</span>;
+    }
+}
+
+<span class="code-comment">// Creator interface</span>
+<span class="code-keyword">abstract class</span> <span class="code-class">DocumentCreator</span> {
+    <span class="code-comment">// Factory method</span>
+    <span class="code-keyword">abstract</span> <span class="code-function">createDocument</span>(): Document;
+    
+    <span class="code-comment">// Template method that uses the factory method</span>
+    <span class="code-function">openDocument</span>(): <span class="code-keyword">void</span> {
+        <span class="code-keyword">const</span> document = <span class="code-keyword">this</span>.createDocument();
+        console.log(document.open());
+    }
+}
+
+<span class="code-comment">// Concrete creators</span>
+<span class="code-keyword">class</span> <span class="code-class">PDFDocumentCreator</span> <span class="code-keyword">extends</span> DocumentCreator {
+    <span class="code-function">createDocument</span>(): Document {
+        <span class="code-keyword">return new</span> PDFDocument();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">WordDocumentCreator</span> <span class="code-keyword">extends</span> DocumentCreator {
+    <span class="code-function">createDocument</span>(): Document {
+        <span class="code-keyword">return new</span> WordDocument();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">TextDocumentCreator</span> <span class="code-keyword">extends</span> DocumentCreator {
+    <span class="code-function">createDocument</span>(): Document {
+        <span class="code-keyword">return new</span> TextDocument();
+    }
+}
+
+<span class="code-comment">// Alternative: Simple Factory implementation</span>
+<span class="code-keyword">class</span> <span class="code-class">DocumentFactory</span> {
+    <span class="code-keyword">static</span> <span class="code-function">createDocument</span>(type: <span class="code-keyword">string</span>): Document {
+        <span class="code-keyword">switch</span>(type) {
+            <span class="code-keyword">case</span> <span class="code-string">'pdf'</span>:
+                <span class="code-keyword">return new</span> PDFDocument();
+            <span class="code-keyword">case</span> <span class="code-string">'word'</span>:
+                <span class="code-keyword">return new</span> WordDocument();
+            <span class="code-keyword">case</span> <span class="code-string">'text'</span>:
+                <span class="code-keyword">return new</span> TextDocument();
+            <span class="code-keyword">default</span>:
+                <span class="code-keyword">throw new</span> Error(`Unknown document type: ${type}`);
+        }
+    }
+}
+
+<span class="code-comment">// Usage</span>
+<span class="code-keyword">function</span> <span class="code-function">clientCode</span>() {
+    <span class="code-comment">// Using the Factory Method pattern</span>
+    <span class="code-keyword">const</span> creators: DocumentCreator[] = [
+        <span class="code-keyword">new</span> PDFDocumentCreator(),
+        <span class="code-keyword">new</span> WordDocumentCreator(),
+        <span class="code-keyword">new</span> TextDocumentCreator()
+    ];
+    
+    <span class="code-keyword">for</span> (<span class="code-keyword">const</span> creator <span class="code-keyword">of</span> creators) {
+        <span class="code-keyword">const</span> document = creator.createDocument();
+        console.log(document.open());
+        console.log(document.save());
+    }
+    
+    <span class="code-comment">// Using the Simple Factory</span>
+    <span class="code-keyword">const</span> pdf = DocumentFactory.createDocument(<span class="code-string">'pdf'</span>);
+    <span class="code-keyword">const</span> word = DocumentFactory.createDocument(<span class="code-string">'word'</span>);
+    <span class="code-keyword">const</span> text = DocumentFactory.createDocument(<span class="code-string">'text'</span>);
+    
+    console.log(pdf.open());
+    console.log(word.save());
+    console.log(text.open());
+}
+
+clientCode();
+</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="implementation-section">
+                        <h4>Implementation Considerations</h4>
+                        <ul>
+                            <li><strong>Default vs. Parameterized Factory Methods:</strong> Factory methods can create objects based on parameters or return default objects.</li>
+                            <li><strong>Creator Hierarchies:</strong> Consider when to create parallel hierarchies of creators and products.</li>
+                            <li><strong>Template Methods:</strong> Factory methods are often called from template methods in the creator class.</li>
+                            <li><strong>Language Specifics:</strong> In some languages, the factory method might be a static method (Simple Factory variant).</li>
+                            <li><strong>Naming Conventions:</strong> Use clear and consistent naming for factory methods ("create", "make", "build", etc.).</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="implementation-section">
+                        <h4>Variations</h4>
+                        <div class="details-grid">
+                            <div class="detail-card">
+                                <div class="detail-title">Simple Factory</div>
+                                <div class="detail-content">
+                                    A non-pattern variation where a static method creates objects without subclassing the creator.
+                                </div>
+                            </div>
+                            
+                            <div class="detail-card">
+                                <div class="detail-title">Parameterized Factory</div>
+                                <div class="detail-content">
+                                    Factory method that takes parameters to determine which product to create, rather than having separate creator subclasses.
+                                </div>
+                            </div>
+                            
+                            <div class="detail-card">
+                                <div class="detail-title">Abstract Factory</div>
+                                <div class="detail-content">
+                                    Related pattern that provides an interface for creating families of related objects without specifying their concrete classes.
+                                </div>
+                            </div>
+                            
+                            <div class="detail-card">
+                                <div class="detail-title">Factory Function</div>
+                                <div class="detail-content">
+                                    In functional programming, a function that creates and returns objects without using classes or inheritance.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="examples-tab" class="tab-content">
+                    <h3>Real-World Examples</h3>
+                    
+                    <div class="example-item">
+                        <h4 class="example-title">UI Frameworks</h4>
+                        <p>UI frameworks often use Factory Method to create UI components appropriate for different platforms while presenting a consistent interface.</p>
+                        <div class="code-example">
+                            <pre>
+<span class="code-comment">// UI Framework example</span>
+<span class="code-keyword">abstract class</span> <span class="code-class">UIFactory</span> {
+    <span class="code-keyword">public abstract</span> Button <span class="code-function">createButton</span>();
+    <span class="code-keyword">public abstract</span> Checkbox <span class="code-function">createCheckbox</span>();
+}
+
+<span class="code-keyword">class</span> <span class="code-class">WindowsUIFactory</span> <span class="code-keyword">extends</span> UIFactory {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Button <span class="code-function">createButton</span>() {
+        <span class="code-keyword">return new</span> WindowsButton();
+    }
+    
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Checkbox <span class="code-function">createCheckbox</span>() {
+        <span class="code-keyword">return new</span> WindowsCheckbox();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">MacUIFactory</span> <span class="code-keyword">extends</span> UIFactory {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Button <span class="code-function">createButton</span>() {
+        <span class="code-keyword">return new</span> MacButton();
+    }
+    
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Checkbox <span class="code-function">createCheckbox</span>() {
+        <span class="code-keyword">return new</span> MacCheckbox();
+    }
+}
+
+<span class="code-comment">// Client code</span>
+<span class="code-keyword">public void</span> <span class="code-function">createUI</span>(UIFactory factory) {
+    Button button = factory.createButton();
+    Checkbox checkbox = factory.createCheckbox();
+    button.render();
+    checkbox.render();
+}
+
+<span class="code-comment">// Usage</span>
+UIFactory factory;
+<span class="code-keyword">if</span> (System.getProperty(<span class="code-string">"os.name"</span>).contains(<span class="code-string">"Windows"</span>)) {
+    factory = <span class="code-keyword">new</span> WindowsUIFactory();
+} <span class="code-keyword">else</span> {
+    factory = <span class="code-keyword">new</span> MacUIFactory();
+}
+
+createUI(factory);
+</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="example-item">
+                        <h4 class="example-title">Database Connectors</h4>
+                        <p>Object-Relational Mapping (ORM) frameworks use Factory Method to create appropriate database connections and query builders.</p>
+                        <div class="code-example">
+                            <pre>
+<span class="code-comment">// Database connector example</span>
+<span class="code-keyword">abstract class</span> <span class="code-class">DatabaseConnector</span> {
+    <span class="code-keyword">public abstract</span> Connection <span class="code-function">createConnection</span>(String connectionString);
+    <span class="code-keyword">public abstract</span> QueryBuilder <span class="code-function">createQueryBuilder</span>();
+    
+    <span class="code-keyword">public</span> <span class="code-function">executeQuery</span>(String query) {
+        Connection connection = createConnection(<span class="code-string">"default:connection:string"</span>);
+        QueryBuilder builder = createQueryBuilder();
+        String formattedQuery = builder.format(query);
+        <span class="code-keyword">return</span> connection.execute(formattedQuery);
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">MySQLConnector</span> <span class="code-keyword">extends</span> DatabaseConnector {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Connection <span class="code-function">createConnection</span>(String connectionString) {
+        <span class="code-keyword">return new</span> MySQLConnection(connectionString);
+    }
+    
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> QueryBuilder <span class="code-function">createQueryBuilder</span>() {
+        <span class="code-keyword">return new</span> MySQLQueryBuilder();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">PostgreSQLConnector</span> <span class="code-keyword">extends</span> DatabaseConnector {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> Connection <span class="code-function">createConnection</span>(String connectionString) {
+        <span class="code-keyword">return new</span> PostgreSQLConnection(connectionString);
+    }
+    
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public</span> QueryBuilder <span class="code-function">createQueryBuilder</span>() {
+        <span class="code-keyword">return new</span> PostgreSQLQueryBuilder();
+    }
+}
+
+<span class="code-comment">// Usage</span>
+DatabaseConnector connector = Configuration.getDatabaseType().equals(<span class="code-string">"MySQL"</span>) 
+    ? <span class="code-keyword">new</span> MySQLConnector() 
+    : <span class="code-keyword">new</span> PostgreSQLConnector();
+
+connector.executeQuery(<span class="code-string">"SELECT * FROM users"</span>);
+</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="example-item">
+                        <h4 class="example-title">Logistic Management</h4>
+                        <p>Logistics applications use Factory Method to create different types of transport without coupling the client code to specific transport classes.</p>
+                        <div class="code-example">
+                            <pre>
+<span class="code-comment">// Logistics application example</span>
+<span class="code-keyword">interface</span> <span class="code-class">Transport</span> {
+    <span class="code-keyword">void</span> <span class="code-function">deliver</span>();
+}
+
+<span class="code-keyword">class</span> <span class="code-class">Truck</span> <span class="code-keyword">implements</span> Transport {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public void</span> <span class="code-function">deliver</span>() {
+        System.out.println(<span class="code-string">"Delivering by land in a truck"</span>);
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">Ship</span> <span class="code-keyword">implements</span> Transport {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">public void</span> <span class="code-function">deliver</span>() {
+        System.out.println(<span class="code-string">"Delivering by sea in a ship"</span>);
+    }
+}
+
+<span class="code-keyword">abstract class</span> <span class="code-class">LogisticsCompany</span> {
+    <span class="code-comment">// Factory method</span>
+    <span class="code-keyword">protected abstract</span> Transport <span class="code-function">createTransport</span>();
+    
+    <span class="code-keyword">public void</span> <span class="code-function">planDelivery</span>() {
+        Transport transport = createTransport();
+        System.out.println(<span class="code-string">"Planning delivery route..."</span>);
+        transport.deliver();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">RoadLogistics</span> <span class="code-keyword">extends</span> LogisticsCompany {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">protected</span> Transport <span class="code-function">createTransport</span>() {
+        <span class="code-keyword">return new</span> Truck();
+    }
+}
+
+<span class="code-keyword">class</span> <span class="code-class">SeaLogistics</span> <span class="code-keyword">extends</span> LogisticsCompany {
+    <span class="code-function">@Override</span>
+    <span class="code-keyword">protected</span> Transport <span class="code-function">createTransport</span>() {
+        <span class="code-keyword">return new</span> Ship();
+    }
+}
+
+<span class="code-comment">// Usage</span>
+<span class="code-keyword">class</span> <span class="code-class">LogisticsApp</span> {
+    <span class="code-keyword">public static void</span> <span class="code-function">main</span>(String[] args) {
+        LogisticsCompany logistics;
+        
+        <span class="code-comment">// Determine logistics type based on delivery location</span>
+        <span class="code-keyword">if</span> (DeliveryLocationService.isOverseas()) {
+            logistics = <span class="code-keyword">new</span> SeaLogistics();
+        } <span class="code-keyword">else</span> {
+            logistics = <span class="code-keyword">new</span> RoadLogistics();
+        }
+        
+        logistics.planDelivery();
+    }
+}
+</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="pattern-relationships">
+                        <h3>Related Patterns</h3>
+                        <div class="relationship-grid">
+                            <div class="relationship-card">
+                                <div class="relationship-type">Similar to</div>
+                                <div class="relationship-name">Abstract Factory</div>
+                                <p>Abstract Factory creates families of related objects without exposing concrete classes.</p>
+                            </div>
+                            
+                            <div class="relationship-card">
+                                <div class="relationship-type">Often used with</div>
+                                <div class="relationship-name">Template Method</div>
+                                <p>Factory Method is often called from Template Methods to create required objects.</p>
+                            </div>
+                            
+                            <div class="relationship-card">
+                                <div class="relationship-type">Can be implemented with</div>
+                                <div class="relationship-name">Prototype</div>
+                                <p>Factory Methods can create objects by cloning pre-built prototype instances.</p>
+                            </div>
+                            
+                            <div class="relationship-card">
+                                <div class="relationship-type">Alternative to</div>
+                                <div class="relationship-name">Builder</div>
+                                <p>Builder focuses on step-by-step construction of complex objects.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="simulate-tab" class="tab-content">
+                    <h3>Interactive Simulation</h3>
+                    <p>This simulation demonstrates the Factory Method pattern in action. You can create different types of documents and perform operations on them.</p>
+                    
+                    <div class="pattern-simulation">
+                        <div class="simulation-controls">
+                            <button class="simulation-button" id="create-pdf">Create PDF Document</button>
+                            <button class="simulation-button" id="create-word">Create Word Document</button>
+                            <button class="simulation-button" id="create-text">Create Text Document</button>
+                            <button class="simulation-button" id="open-document">Open Document</button>
+                            <button class="simulation-button" id="save-document">Save Document</button>
+                        </div>
+                        
+                        <div class="simulation-canvas">
+                            <svg width="100%" height="100%" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" id="simulation-svg">
+                                <!-- Factory -->
+                                <rect x="100" y="100" width="200" height="100" fill="#f8d7da" stroke="#e74c3c" stroke-width="2" rx="5" ry="5" id="simulation-factory" />
+                                <text x="200" y="140" text-anchor="middle" font-size="16" font-weight="bold">Document Factory</text>
+                                <text x="200" y="170" text-anchor="middle" font-size="14">createDocument(type)</text>
+                                
+                                <!-- Document (Initially hidden) -->
+                                <g id="simulation-document" style="display: none;">
+                                    <rect x="500" y="100" width="200" height="100" fill="#e8f4e5" stroke="#2ecc71" stroke-width="2" rx="5" ry="5" />
+                                    <text x="600" y="140" text-anchor="middle" font-size="16" font-weight="bold" id="document-type">PDF Document</text>
+                                    <text x="600" y="170" text-anchor="middle" font-size="14">open()</text>
+                                    <text x="600" y="190" text-anchor="middle" font-size="14">save()</text>
+                                </g>
+                                
+                                <!-- Creation arrow -->
+                                <path d="M300,150 Q400,150 500,150" stroke="#333" stroke-width="2" marker-end="url(#sim-arrowhead)" id="creation-arrow" style="display: none;" />
+                                
+                                <!-- Arrow definitions -->
+                                <defs>
+                                    <marker id="sim-arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        
+                        <div id="simulation-log" style="margin-top: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 4px; max-height: 100px; overflow-y: auto;">
+                            <div>Factory Method simulation initialized. Create a document to begin.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.pattern-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                document.querySelectorAll('.pattern-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update active content
+                const tabId = tab.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Code example tab switching
+        document.querySelectorAll('.code-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update active tab
+                document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update active code panel
+                const lang = tab.getAttribute('data-lang');
+                document.querySelectorAll('.code-panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(`${lang}-code`).classList.add('active');
+            });
+        });
+        
+        // Pattern list functionality
+        document.querySelectorAll('.category-title').forEach(title => {
+            title.addEventListener('click', () => {
+                title.classList.toggle('collapsed');
+                const items = title.nextElementSibling;
+                items.style.display = title.classList.contains('collapsed') ? 'none' : 'block';
+            });
+        });
+        
+        document.querySelectorAll('.pattern-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.pattern-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                // In a real implementation, this would load the selected pattern
+            });
+        });
+        
+        // Simulation functionality
+        let simulationState = {
+            currentDocument: null,
+            documentType: null
+        };
+        
+        function updateSimulation() {
+            const documentElement = document.getElementById('simulation-document');
+            const creationArrow = document.getElementById('creation-arrow');
+            const documentTypeText = document.getElementById('document-type');
+            
+            if (simulationState.currentDocument) {
+                // Show document and arrow
+                documentElement.style.display = 'block';
+                creationArrow.style.display = 'block';
+                
+                // Update document type
+                documentTypeText.textContent = simulationState.documentType;
+                
+                // Animate creation
+                documentElement.classList.add('highlight-animation');
+                setTimeout(() => {
+                    documentElement.classList.remove('highlight-animation');
+                }, 1500);
+            } else {
+                // Hide document and arrow
+                documentElement.style.display = 'none';
+                creationArrow.style.display = 'none';
+            }
+        }
+        
+        function createDocument(type) {
+            // Set the current document and type
+            simulationState.currentDocument = type.toLowerCase();
+            simulationState.documentType = `${type} Document`;
+            
+            // Log the creation
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `Created a ${type} Document using the Factory`;
+            document.getElementById('simulation-log').prepend(logEntry);
+            
+            // Update the simulation
+            updateSimulation();
+            
+            // Animate the creation arrow
+            const creationArrow = document.getElementById('creation-arrow');
+            creationArrow.classList.add('highlight-animation');
+            setTimeout(() => {
+                creationArrow.classList.remove('highlight-animation');
+            }, 1500);
+        }
+        
+        function performOperation(operation) {
+            if (!simulationState.currentDocument) {
+                const logEntry = document.createElement('div');
+                logEntry.textContent = `No document created yet. Please create a document first.`;
+                document.getElementById('simulation-log').prepend(logEntry);
+                return;
+            }
+            
+            // Log the operation
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `${operation === 'open' ? 'Opening' : 'Saving'} ${simulationState.documentType}`;
+            document.getElementById('simulation-log').prepend(logEntry);
+            
+            // Highlight the document
+            const documentElement = document.getElementById('simulation-document');
+            documentElement.classList.add('highlight-animation');
+            setTimeout(() => {
+                documentElement.classList.remove('highlight-animation');
+            }, 1500);
+        }
+        
+        // Simulation event handlers
+        document.getElementById('create-pdf').addEventListener('click', () => {
+            createDocument('PDF');
+        });
+        
+        document.getElementById('create-word').addEventListener('click', () => {
+            createDocument('Word');
+        });
+        
+        document.getElementById('create-text').addEventListener('click', () => {
+            createDocument('Text');
+        });
+        
+        document.getElementById('open-document').addEventListener('click', () => {
+            performOperation('open');
+        });
+        
+        document.getElementById('save-document').addEventListener('click', () => {
+            performOperation('save');
+        });
+        
+        // Initialize simulation
+        updateSimulation();
+    </script>
+</body>
+</html>
