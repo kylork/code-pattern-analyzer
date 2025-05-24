@@ -1074,7 +1074,7 @@ def run_dashboard() -> None:
     webbrowser.open("http://127.0.0.1:8050/")
     
     # Run server
-    app.run_server(debug=True)
+    app.run(debug=True)
 
 
 if __name__ == "__main__":

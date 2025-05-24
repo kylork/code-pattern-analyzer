@@ -1110,7 +1110,17 @@ def generate_refactoring_report(
         <div class="filter-group">
             <label>Filter by Type:</label>
             <button onclick="filterByType('all')">All</button>
-            {"".join([f'<button onclick="filterByType(\'{t}\')">{t}</button>' for t in set(s.refactoring_type.value for s in suggestions)])}
+"""
+
+        # Add type filter buttons - manually to avoid f-string issues
+        type_set = set()
+        for s in suggestions:
+            type_set.add(s.refactoring_type.value)
+            
+        for t in type_set:
+            html += f'            <button onclick="filterByType(\'{t}\')">{t}</button>\n'
+
+        html += """
         </div>
     </div>
     
